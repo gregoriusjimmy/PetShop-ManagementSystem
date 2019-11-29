@@ -13,26 +13,25 @@ import {
 } from "reactstrap";
 const initialState = {
   tabelItem: [],
-  kd_barang: "",
-  nama_barang: "",
-  satuan: "",
-  harga: "",
-  stok_barang: ""
+  id_supplier: "",
+  nama_supplier: "",
+  alamat: "",
+  no_telp: ""
 };
-class Barang extends Component {
+
+class Supplier extends Component {
   constructor(props) {
     super(props);
     this.state = {
       tabelItem: [],
-      kd_barang: "",
-      nama_barang: "",
-      satuan: "",
-      harga: "",
-      stok_barang: ""
+      id_supplier: "",
+      nama_supplier: "",
+      alamat: "",
+      no_telp: ""
     };
   }
   readData = () => {
-    fetch("http://localhost:3001/item")
+    fetch("http://localhost:3001/supplier")
       .then(response => {
         return response.json();
       })
@@ -40,6 +39,9 @@ class Barang extends Component {
         this.setState({ tabelItem: data });
       });
   };
+  componentDidMount() {
+    this.readData();
+  }
   handleChange = event => {
     const { value, name } = event.target;
 
@@ -48,22 +50,21 @@ class Barang extends Component {
   handleUpdate = event => {
     const dataId = event.target.attributes.data_id.value;
     const found = this.state.tabelItem.find(dataField => {
-      return dataField.kd_barang === dataId;
+      return dataField.id_supplier === dataId;
     });
     this.setState({
-      kd_barang: found.kd_barang,
-      nama_barang: found.nama_barang,
-      satuan: found.satuan,
-      harga: found.harga,
-      stok_barang: found.stok_barang
+      id_supplier: found.id_supplier,
+      nama_supplier: found.nama_supplier,
+      alamat: found.alamat,
+      no_telp: found.no_telp
     });
   };
   onDelete = event => {
-    fetch("http://localhost:3001/item", {
+    fetch("http://localhost:3001/supplier", {
       method: "delete",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        kd_barang: event.target.attributes.data_id.value
+        id_supplier: event.target.attributes.data_id.value
       })
     })
       .then(response => {
@@ -74,15 +75,14 @@ class Barang extends Component {
       });
   };
   onAdd = () => {
-    fetch("http://localhost:3001/item", {
+    fetch("http://localhost:3001/supplier", {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        kd_barang: this.state.kd_barang,
-        nama_barang: this.state.nama_barang,
-        satuan: this.state.satuan,
-        harga: this.state.harga,
-        stok_barang: this.state.stok_barang
+        id_supplier: this.state.id_supplier,
+        nama_supplier: this.state.nama_supplier,
+        alamat: this.state.alamat,
+        no_telp: this.state.no_telp
       })
     })
       .then(response => {
@@ -95,15 +95,14 @@ class Barang extends Component {
       });
   };
   onUpdate = () => {
-    fetch("http://localhost:3001/item", {
+    fetch("http://localhost:3001/supplier", {
       method: "put",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        kd_barang: this.state.kd_barang,
-        nama_barang: this.state.nama_barang,
-        satuan: this.state.satuan,
-        harga: this.state.harga,
-        stok_barang: this.state.stok_barang
+        id_supplier: this.state.id_supplier,
+        nama_supplier: this.state.nama_supplier,
+        alamat: this.state.alamat,
+        no_telp: this.state.no_telp
       })
     })
       .then(response => {
@@ -115,9 +114,6 @@ class Barang extends Component {
         this.readData();
       });
   };
-  componentDidMount() {
-    this.readData();
-  }
   render() {
     return (
       <div className="animated fadeIn">
@@ -127,57 +123,46 @@ class Barang extends Component {
               <Row form>
                 <Col md={6}>
                   <FormGroup>
-                    <Label for="kd_barang">Kode Barang</Label>
+                    <Label for="id_supplier">Id Supplier</Label>
                     <Input
-                      value={this.state.kd_barang}
-                      name="kd_barang"
-                      id="kd_barang"
+                      value={this.state.id_supplier}
+                      name="id_supplier"
+                      id="id_supplier"
                       onChange={this.handleChange}
                     ></Input>
                   </FormGroup>
                 </Col>
                 <Col md={6}>
                   <FormGroup>
-                    <Label for="nama_barang">Nama Barang</Label>
+                    <Label for="nama_supplier">Nama Supplier</Label>
                     <Input
-                      value={this.state.nama_barang}
-                      name="nama_barang"
-                      id="nama_barang"
+                      value={this.state.nama_supplier}
+                      name="nama_supplier"
+                      id="nama_supplier"
                       onChange={this.handleChange}
                     ></Input>
                   </FormGroup>
                 </Col>
               </Row>
               <Row form>
-                <Col md={4}>
+                <Col md={6}>
                   <FormGroup>
-                    <Label for="satuan">Satuan</Label>
+                    <Label for="alamat">Alamat</Label>
                     <Input
-                      value={this.state.satuan}
-                      name="satuan"
-                      id="satuan"
+                      value={this.state.alamat}
+                      name="alamat"
+                      id="alamat"
                       onChange={this.handleChange}
                     ></Input>
                   </FormGroup>
                 </Col>
-                <Col md={4}>
+                <Col md={6}>
                   <FormGroup>
-                    <Label for="harga">Harga</Label>
+                    <Label for="no_telp">No Telp</Label>
                     <Input
-                      value={this.state.harga}
-                      name="harga"
-                      id="harga"
-                      onChange={this.handleChange}
-                    ></Input>
-                  </FormGroup>
-                </Col>
-                <Col md={4}>
-                  <FormGroup>
-                    <Label for="stok_barang">Stok Barang</Label>
-                    <Input
-                      value={this.state.stok_barang}
-                      name="stok_barang"
-                      id="stok_barang"
+                      value={this.state.no_telp}
+                      name="no_telp"
+                      id="no_telp"
                       onChange={this.handleChange}
                     ></Input>
                   </FormGroup>
@@ -197,33 +182,31 @@ class Barang extends Component {
             <Table hover>
               <thead>
                 <tr>
-                  <th>KD_BRNG</th>
-                  <th>NAMA_BRNG</th>
-                  <th>SATUAN</th>
-                  <th>HARGA</th>
-                  <th>STOK_BRNG</th>
+                  <th>ID_SUPPLIER</th>
+                  <th>NAMA_SUPPLIER</th>
+                  <th>ALAMAT</th>
+                  <th>NO_TELP</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {this.state.tabelItem.map(dataField => {
                   return (
-                    <tr key={dataField.kd_barang}>
-                      <td>{dataField.kd_barang}</td>
-                      <td>{dataField.nama_barang}</td>
-                      <td>{dataField.satuan}</td>
-                      <td>{dataField.harga}</td>
-                      <td>{dataField.stok_barang}</td>
+                    <tr key={dataField.id_supplier}>
+                      <td>{dataField.id_supplier}</td>
+                      <td>{dataField.nama_supplier}</td>
+                      <td>{dataField.alamat}</td>
+                      <td>{dataField.no_telp}</td>
                       <td>
                         <button
                           className="fa fa-edit mr-2"
                           onClick={this.handleUpdate}
-                          data_id={dataField.kd_barang}
+                          data_id={dataField.id_supplier}
                         />
                         <button
                           className="fa fa-trash"
                           onClick={this.onDelete}
-                          data_id={dataField.kd_barang}
+                          data_id={dataField.id_supplier}
                         />
                       </td>
                     </tr>
@@ -238,4 +221,4 @@ class Barang extends Component {
   }
 }
 
-export default Barang;
+export default Supplier;

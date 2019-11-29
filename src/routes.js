@@ -40,11 +40,15 @@ const Widgets = React.lazy(() => import("./views/Widgets/Widgets"));
 const Users = React.lazy(() => import("./views/Users/Users"));
 const User = React.lazy(() => import("./views/Users/User"));
 const Barang = React.lazy(() => import("./views/Tables/Barang/Barang"));
+const Supplier = React.lazy(() => import("./views/Tables/Supplier/Supplier"));
+const Pembeli = React.lazy(() => import("./views/Tables/Pembeli/Pembeli"));
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: "/", exact: true, name: "Home" },
   { path: "/dashboard", name: "Dashboard", component: Dashboard },
-  { path: "/tables/barang", name: "Barang", component: Barang },
+  { path: "/tabel/barang", name: "Barang", component: Barang },
+  { path: "/tabel/pembeli", name: "Barang", component: Pembeli },
+  { path: "/tabel/supplier", name: "Supplier", component: Supplier },
   { path: "/theme", exact: true, name: "Theme", component: Colors },
   { path: "/theme/colors", name: "Colors", component: Colors },
   { path: "/theme/typography", name: "Typography", component: Typography },

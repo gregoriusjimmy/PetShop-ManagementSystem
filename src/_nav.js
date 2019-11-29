@@ -26,11 +26,11 @@ export default {
       children: [
         {
           name: "Barang",
-          url: "/tables/barang"
+          url: "/tabel/barang"
         },
         {
           name: "Pembeli",
-          url: "/base/cards"
+          url: "/tabel/pembeli"
         },
         {
           name: "Pesanan",
@@ -38,7 +38,7 @@ export default {
         },
         {
           name: "Supllier",
-          url: "/base/collapses"
+          url: "/tabel/supplier"
         },
         {
           name: "Transaksi",
