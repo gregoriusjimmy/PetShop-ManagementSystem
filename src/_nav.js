@@ -9,16 +9,16 @@ export default {
         text: "NEW"
       }
     },
-    {
-      title: true,
-      name: "Data",
-      wrapper: {
-        // optional wrapper object
-        element: "", // required valid HTML5 element tag
-        attributes: {} // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
-      },
-      class: "" // optional class names space delimited list for title item ex: "text-center"
-    },
+    // {
+    //   title: true,
+    //   name: "Data",
+    //   wrapper: {
+    //     // optional wrapper object
+    //     element: "", // required valid HTML5 element tag
+    //     attributes: {} // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
+    //   },
+    //   class: "" // optional class names space delimited list for title item ex: "text-center"
+    // },
     {
       name: "Tabel",
       url: "/tables/barang",
@@ -34,7 +34,7 @@ export default {
         },
         {
           name: "Pesanan",
-          url: "/base/carousels"
+          url: "/tabel/pesanan"
         },
         {
           name: "Supllier",
@@ -42,19 +42,19 @@ export default {
         },
         {
           name: "Transaksi",
-          url: "/base/collapses"
+          url: "/tabel/transaksi"
         }
       ]
     },
 
-    {
-      title: true,
-      name: "Jurnal",
-      wrapper: {
-        element: "",
-        attributes: {}
-      }
-    },
+    // {
+    //   title: true,
+    //   name: "Jurnal",
+    //   wrapper: {
+    //     element: "",
+    //     attributes: {}
+    //   }
+    // },
     {
       name: "Jurnal",
       url: "/base",
@@ -176,27 +176,27 @@ export default {
           icon: "icon-star"
         }
       ]
-    },
-    {
-      name: "Disabled",
-      url: "/dashboard",
-      icon: "icon-ban",
-      attributes: { disabled: true }
-    },
-    {
-      name: "Download CoreUI",
-      url: "https://coreui.io/react/",
-      icon: "icon-cloud-download",
-      class: "mt-auto",
-      variant: "success",
-      attributes: { target: "_blank", rel: "noopener" }
-    },
-    {
-      name: "Try CoreUI PRO",
-      url: "https://coreui.io/pro/react/",
-      icon: "icon-layers",
-      variant: "danger",
-      attributes: { target: "_blank", rel: "noopener" }
     }
+    // {
+    //   name: "Disabled",
+    //   url: "/dashboard",
+    //   icon: "icon-ban",
+    //   attributes: { disabled: true }
+    // },
+    // {
+    //   name: "Download CoreUI",
+    //   url: "https://coreui.io/react/",
+    //   icon: "icon-cloud-download",
+    //   class: "mt-auto",
+    //   variant: "success",
+    //   attributes: { target: "_blank", rel: "noopener" }
+    // },
+    // {
+    //   name: "Try CoreUI PRO",
+    //   url: "https://coreui.io/pro/react/",
+    //   icon: "icon-layers",
+    //   variant: "danger",
+    //   attributes: { target: "_blank", rel: "noopener" }
+    // }
   ]
 };

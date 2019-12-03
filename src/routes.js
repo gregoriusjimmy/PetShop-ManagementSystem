@@ -42,6 +42,10 @@ const User = React.lazy(() => import("./views/Users/User"));
 const Barang = React.lazy(() => import("./views/Tables/Barang/Barang"));
 const Supplier = React.lazy(() => import("./views/Tables/Supplier/Supplier"));
 const Pembeli = React.lazy(() => import("./views/Tables/Pembeli/Pembeli"));
+const Pesanan = React.lazy(() => import("./views/Tables/Pesanan/Pesanan"));
+const Transaksi = React.lazy(() =>
+  import("./views/Tables/Transaksi/Transaksi")
+);
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: "/", exact: true, name: "Home" },
@@ -49,6 +53,8 @@ const routes = [
   { path: "/tabel/barang", name: "Barang", component: Barang },
   { path: "/tabel/pembeli", name: "Barang", component: Pembeli },
   { path: "/tabel/supplier", name: "Supplier", component: Supplier },
+  { path: "/tabel/pesanan", name: "Pesanan", component: Pesanan },
+  { path: "/tabel/transaksi", name: "Transaksi", component: Transaksi },
   { path: "/theme", exact: true, name: "Theme", component: Colors },
   { path: "/theme/colors", name: "Colors", component: Colors },
   { path: "/theme/typography", name: "Typography", component: Typography },
