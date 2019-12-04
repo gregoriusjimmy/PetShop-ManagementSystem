@@ -172,7 +172,7 @@ class Supplier extends Component {
             <Button color="success" onClick={this.onAdd}>
               Add
             </Button>{" "}
-            <Button color="warning" onClick={this.onUpdate}>
+            <Button color="primary" onClick={this.onUpdate}>
               Update
             </Button>{" "}
           </CardBody>
@@ -198,12 +198,14 @@ class Supplier extends Component {
                       <td>{dataField.alamat}</td>
                       <td>{dataField.no_telp}</td>
                       <td>
-                        <button
+                        <Button
+                          color="success"
                           className="fa fa-edit mr-2"
                           onClick={this.handleUpdate}
                           data_id={dataField.id_supplier}
                         />
-                        <button
+                        <Button
+                          color="danger"
                           className="fa fa-trash"
                           onClick={this.onDelete}
                           data_id={dataField.id_supplier}

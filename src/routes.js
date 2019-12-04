@@ -46,12 +46,15 @@ const Pesanan = React.lazy(() => import("./views/Tables/Pesanan/Pesanan"));
 const Transaksi = React.lazy(() =>
   import("./views/Tables/Transaksi/Transaksi")
 );
+const Kasir = React.lazy(() => import("./views/Kasir/Kasir"));
+
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: "/", exact: true, name: "Home" },
-  { path: "/dashboard", name: "Dashboard", component: Dashboard },
+  // { path: "/dashboard", name: "Dashboard", component: Dashboard },
+  { path: "/kasir", name: "Kasir", component: Kasir },
   { path: "/tabel/barang", name: "Barang", component: Barang },
-  { path: "/tabel/pembeli", name: "Barang", component: Pembeli },
+  { path: "/tabel/pembeli", name: "Pembeli", component: Pembeli },
   { path: "/tabel/supplier", name: "Supplier", component: Supplier },
   { path: "/tabel/pesanan", name: "Pesanan", component: Pesanan },
   { path: "/tabel/transaksi", name: "Transaksi", component: Transaksi },

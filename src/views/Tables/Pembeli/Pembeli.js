@@ -9,14 +9,18 @@ import {
   Form,
   FormGroup,
   Label,
-  Input
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText
 } from "reactstrap";
 const initialState = {
   tabelItem: [],
   id_pembeli: "",
   nama: "",
   alamat: "",
-  no_telp: ""
+  no_telp: "",
+  searchField: ""
 };
 class Pembeli extends Component {
   constructor(props) {
@@ -26,7 +30,8 @@ class Pembeli extends Component {
       id_pembeli: "",
       nama: "",
       alamat: "",
-      no_telp: ""
+      no_telp: "",
+      searchField: ""
     };
   }
   readData = () => {
@@ -114,6 +119,16 @@ class Pembeli extends Component {
     this.readData();
   }
 
+  onSearchChange = event => {
+    this.setState({ searchField: event.target.value });
+    console.log(event.target.value);
+  };
+  filterField = () => {
+    const { tabelItem, searchField } = this.state;
+    return tabelItem.filter(field => {
+      return field.nama.toUpperCase().includes(searchField.toUpperCase());
+    });
+  };
   render() {
     return (
       <div className="animated fadeIn">
@@ -172,11 +187,30 @@ class Pembeli extends Component {
             <Button color="success" onClick={this.onAdd}>
               Add
             </Button>{" "}
-            <Button color="warning" onClick={this.onUpdate}>
+            <Button color="primary" onClick={this.onUpdate}>
               Update
             </Button>{" "}
           </CardBody>
         </Card>
+        <Row>
+          <Col md={5}>
+            <Card>
+              <CardBody>
+                <InputGroup>
+                  <Input
+                    onChange={this.onSearchChange}
+                    placeholder="Nama Pembeli"
+                  />
+                  <InputGroupAddon addonType="append">
+                    <InputGroupText>
+                      <i className="fa fa-search"></i>
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
         <Card>
           <CardBody>
             <Table hover>
@@ -190,7 +224,7 @@ class Pembeli extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.state.tabelItem.map(dataField => {
+                {this.filterField().map(dataField => {
                   return (
                     <tr key={dataField.id_pembeli}>
                       <td>{dataField.id_pembeli}</td>
@@ -198,12 +232,14 @@ class Pembeli extends Component {
                       <td>{dataField.alamat}</td>
                       <td>{dataField.no_telp}</td>
                       <td>
-                        <button
+                        <Button
+                          color="success"
                           className="fa fa-edit mr-2"
                           onClick={this.handleUpdate}
                           data_id={dataField.id_pembeli}
                         />
-                        <button
+                        <Button
+                          color="danger"
                           className="fa fa-trash"
                           onClick={this.onDelete}
                           data_id={dataField.id_pembeli}

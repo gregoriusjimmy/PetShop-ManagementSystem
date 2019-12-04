@@ -189,7 +189,7 @@ class Transaksi extends Component {
             <Button color="success" onClick={this.onAdd}>
               Add
             </Button>{" "}
-            <Button color="warning" onClick={this.onUpdate}>
+            <Button color="primary" onClick={this.onUpdate}>
               Update
             </Button>{" "}
           </CardBody>
@@ -217,12 +217,14 @@ class Transaksi extends Component {
                       <td>{dataField.jumlah}</td>
                       <td>{dataField.tgl_transaksi.slice(0, 10)}</td>
                       <td>
-                        <button
+                        <Button
+                          color="success"
                           className="fa fa-edit mr-2"
                           onClick={this.handleUpdate}
                           data_id={dataField.kd_transaksi}
                         />
-                        <button
+                        <Button
+                          color="danger"
                           className="fa fa-trash"
                           onClick={this.onDelete}
                           data_id={dataField.kd_transaksi}

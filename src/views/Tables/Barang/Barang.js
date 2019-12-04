@@ -9,14 +9,18 @@ import {
   Form,
   FormGroup,
   Label,
-  Input
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText
 } from "reactstrap";
 const initialState = {
   tabelItem: [],
   kd_barang: "",
   nama_barang: "",
   satuan: "",
-  harga: "",
+  harga_jual: "",
+  harga_beli: "",
   stok_barang: ""
 };
 class Barang extends Component {
@@ -27,10 +31,13 @@ class Barang extends Component {
       kd_barang: "",
       nama_barang: "",
       satuan: "",
-      harga: "",
-      stok_barang: ""
+      harga_jual: "",
+      harga_beli: "",
+      stok_barang: "",
+      searchField: ""
     };
   }
+
   readData = () => {
     fetch("http://localhost:3001/item")
       .then(response => {
@@ -54,7 +61,8 @@ class Barang extends Component {
       kd_barang: found.kd_barang,
       nama_barang: found.nama_barang,
       satuan: found.satuan,
-      harga: found.harga,
+      harga_jual: found.harga_jual,
+      harga_beli: found.harga_beli,
       stok_barang: found.stok_barang
     });
   };
@@ -81,7 +89,8 @@ class Barang extends Component {
         kd_barang: this.state.kd_barang,
         nama_barang: this.state.nama_barang,
         satuan: this.state.satuan,
-        harga: this.state.harga,
+        harga_beli: this.state.harga_jual,
+        harga_jual: this.state.harga_beli,
         stok_barang: this.state.stok_barang
       })
     })
@@ -102,7 +111,8 @@ class Barang extends Component {
         kd_barang: this.state.kd_barang,
         nama_barang: this.state.nama_barang,
         satuan: this.state.satuan,
-        harga: this.state.harga,
+        harga_beli: this.state.harga_jual,
+        harga_jual: this.state.harga_beli,
         stok_barang: this.state.stok_barang
       })
     })
@@ -118,6 +128,18 @@ class Barang extends Component {
   componentDidMount() {
     this.readData();
   }
+  onSearchChange = event => {
+    this.setState({ searchField: event.target.value });
+    console.log(event.target.value);
+  };
+  filterField = () => {
+    const { tabelItem, searchField } = this.state;
+    return tabelItem.filter(field => {
+      return field.nama_barang
+        .toUpperCase()
+        .includes(searchField.toUpperCase());
+    });
+  };
   render() {
     return (
       <div className="animated fadeIn">
@@ -149,29 +171,44 @@ class Barang extends Component {
                 </Col>
               </Row>
               <Row form>
-                <Col md={4}>
+                <Col md={3}>
                   <FormGroup>
                     <Label for="satuan">Satuan</Label>
                     <Input
+                      type="select"
                       value={this.state.satuan}
                       name="satuan"
                       id="satuan"
                       onChange={this.handleChange}
-                    ></Input>
+                    >
+                      <option value="KG">KG</option>
+                      <option value="PCS">PCS</option>
+                    </Input>
                   </FormGroup>
                 </Col>
-                <Col md={4}>
+                <Col md={3}>
                   <FormGroup>
-                    <Label for="harga">Harga</Label>
+                    <Label for="harga_jual">Harga Jual</Label>
                     <Input
-                      value={this.state.harga}
-                      name="harga"
-                      id="harga"
+                      value={this.state.harga_jual}
+                      name="harga_jual"
+                      id="harga_jual"
                       onChange={this.handleChange}
                     ></Input>
                   </FormGroup>
                 </Col>
-                <Col md={4}>
+                <Col md={3}>
+                  <FormGroup>
+                    <Label for="harga_beli">Harga Beli</Label>
+                    <Input
+                      value={this.state.harga_beli}
+                      name="harga_beli"
+                      id="harga_beli"
+                      onChange={this.handleChange}
+                    ></Input>
+                  </FormGroup>
+                </Col>
+                <Col md={3}>
                   <FormGroup>
                     <Label for="stok_barang">Stok Barang</Label>
                     <Input
@@ -187,11 +224,30 @@ class Barang extends Component {
             <Button color="success" onClick={this.onAdd}>
               Add
             </Button>{" "}
-            <Button color="warning" onClick={this.onUpdate}>
+            <Button color="primary" onClick={this.onUpdate}>
               Update
             </Button>{" "}
           </CardBody>
         </Card>
+        <Row>
+          <Col md={5}>
+            <Card>
+              <CardBody>
+                <InputGroup>
+                  <Input
+                    onChange={this.onSearchChange}
+                    placeholder="Nama Barang"
+                  />
+                  <InputGroupAddon addonType="append">
+                    <InputGroupText>
+                      <i className="fa fa-search"></i>
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </CardBody>
+            </Card>
+          </Col>
+        </Row>
         <Card>
           <CardBody>
             <Table hover>
@@ -200,27 +256,31 @@ class Barang extends Component {
                   <th>KD_BRNG</th>
                   <th>NAMA_BRNG</th>
                   <th>SATUAN</th>
-                  <th>HARGA</th>
+                  <th>HARGA_JUAL</th>
+                  <th>HARGA_BELI</th>
                   <th>STOK_BRNG</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {this.state.tabelItem.map(dataField => {
+                {this.filterField().map(dataField => {
                   return (
                     <tr key={dataField.kd_barang}>
                       <td>{dataField.kd_barang}</td>
                       <td>{dataField.nama_barang}</td>
                       <td>{dataField.satuan}</td>
-                      <td>{dataField.harga}</td>
+                      <td>{dataField.harga_jual}</td>
+                      <td>{dataField.harga_beli}</td>
                       <td>{dataField.stok_barang}</td>
                       <td>
-                        <button
+                        <Button
+                          color="success"
                           className="fa fa-edit mr-2"
                           onClick={this.handleUpdate}
                           data_id={dataField.kd_barang}
                         />
-                        <button
+                        <Button
+                          color="danger"
                           className="fa fa-trash"
                           onClick={this.onDelete}
                           data_id={dataField.kd_barang}
