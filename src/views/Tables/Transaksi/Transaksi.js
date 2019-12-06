@@ -35,6 +35,9 @@ class Transaksi extends Component {
   readData = () => {
     fetch("http://localhost:3001/transaksi")
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to fetch");
+        }
         return response.json();
       })
       .then(data => {
@@ -71,6 +74,9 @@ class Transaksi extends Component {
       })
     })
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to delete");
+        }
         return response.json();
       })
       .then(data => {
@@ -90,6 +96,9 @@ class Transaksi extends Component {
       })
     })
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to add");
+        }
         return response.json();
       })
       .then(data => {
@@ -111,6 +120,9 @@ class Transaksi extends Component {
       })
     })
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to update");
+        }
         return response.json();
       })
       .then(data => {
@@ -208,31 +220,33 @@ class Transaksi extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.state.tabelItem.map(dataField => {
-                  return (
-                    <tr key={dataField.kd_transaksi}>
-                      <td>{dataField.kd_transaksi}</td>
-                      <td>{dataField.id_pembeli}</td>
-                      <td>{dataField.kd_barang}</td>
-                      <td>{dataField.jumlah}</td>
-                      <td>{dataField.tgl_transaksi.slice(0, 10)}</td>
-                      <td>
-                        <Button
-                          color="success"
-                          className="fa fa-edit mr-2"
-                          onClick={this.handleUpdate}
-                          data_id={dataField.kd_transaksi}
-                        />
-                        <Button
-                          color="danger"
-                          className="fa fa-trash"
-                          onClick={this.onDelete}
-                          data_id={dataField.kd_transaksi}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
+                {this.state.tabelItem
+                  ? this.state.tabelItem.map(dataField => {
+                      return (
+                        <tr key={dataField.kd_transaksi}>
+                          <td>{dataField.kd_transaksi}</td>
+                          <td>{dataField.id_pembeli}</td>
+                          <td>{dataField.kd_barang}</td>
+                          <td>{dataField.jumlah}</td>
+                          <td>{dataField.tgl_transaksi.slice(0, 10)}</td>
+                          <td>
+                            <Button
+                              color="success"
+                              className="fa fa-edit mr-2"
+                              onClick={this.handleUpdate}
+                              data_id={dataField.kd_transaksi}
+                            />
+                            <Button
+                              color="danger"
+                              className="fa fa-trash"
+                              onClick={this.onDelete}
+                              data_id={dataField.kd_transaksi}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : null}
               </tbody>
             </Table>
           </CardBody>

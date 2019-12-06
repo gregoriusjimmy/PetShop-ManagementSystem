@@ -41,6 +41,9 @@ class Barang extends Component {
   readData = () => {
     fetch("http://localhost:3001/item")
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to fetch");
+        }
         return response.json();
       })
       .then(data => {
@@ -75,6 +78,9 @@ class Barang extends Component {
       })
     })
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to delete");
+        }
         return response.json();
       })
       .then(data => {
@@ -95,6 +101,9 @@ class Barang extends Component {
       })
     })
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to add");
+        }
         return response.json();
       })
       .then(data => {
@@ -117,10 +126,12 @@ class Barang extends Component {
       })
     })
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to update");
+        }
         return response.json();
       })
       .then(data => {
-        console.log(data);
         this.setState(initialState);
         this.readData();
       });
@@ -263,32 +274,34 @@ class Barang extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.filterField().map(dataField => {
-                  return (
-                    <tr key={dataField.kd_barang}>
-                      <td>{dataField.kd_barang}</td>
-                      <td>{dataField.nama_barang}</td>
-                      <td>{dataField.satuan}</td>
-                      <td>{dataField.harga_jual}</td>
-                      <td>{dataField.harga_beli}</td>
-                      <td>{dataField.stok_barang}</td>
-                      <td>
-                        <Button
-                          color="success"
-                          className="fa fa-edit mr-2"
-                          onClick={this.handleUpdate}
-                          data_id={dataField.kd_barang}
-                        />
-                        <Button
-                          color="danger"
-                          className="fa fa-trash"
-                          onClick={this.onDelete}
-                          data_id={dataField.kd_barang}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
+                {this.state.tabelItem
+                  ? this.filterField().map(dataField => {
+                      return (
+                        <tr key={dataField.kd_barang}>
+                          <td>{dataField.kd_barang}</td>
+                          <td>{dataField.nama_barang}</td>
+                          <td>{dataField.satuan}</td>
+                          <td>{dataField.harga_jual}</td>
+                          <td>{dataField.harga_beli}</td>
+                          <td>{dataField.stok_barang}</td>
+                          <td>
+                            <Button
+                              color="success"
+                              className="fa fa-edit mr-2"
+                              onClick={this.handleUpdate}
+                              data_id={dataField.kd_barang}
+                            />
+                            <Button
+                              color="danger"
+                              className="fa fa-trash"
+                              onClick={this.onDelete}
+                              data_id={dataField.kd_barang}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : null}
               </tbody>
             </Table>
           </CardBody>

@@ -37,6 +37,9 @@ class Pembeli extends Component {
   readData = () => {
     fetch("http://localhost:3001/pembeli")
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to fetch");
+        }
         return response.json();
       })
       .then(data => {
@@ -69,6 +72,9 @@ class Pembeli extends Component {
       })
     })
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to delete");
+        }
         return response.json();
       })
       .then(data => {
@@ -87,6 +93,9 @@ class Pembeli extends Component {
       })
     })
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to add");
+        }
         return response.json();
       })
       .then(data => {
@@ -107,6 +116,9 @@ class Pembeli extends Component {
       })
     })
       .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to update");
+        }
         return response.json();
       })
       .then(data => {
@@ -224,30 +236,32 @@ class Pembeli extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.filterField().map(dataField => {
-                  return (
-                    <tr key={dataField.id_pembeli}>
-                      <td>{dataField.id_pembeli}</td>
-                      <td>{dataField.nama}</td>
-                      <td>{dataField.alamat}</td>
-                      <td>{dataField.no_telp}</td>
-                      <td>
-                        <Button
-                          color="success"
-                          className="fa fa-edit mr-2"
-                          onClick={this.handleUpdate}
-                          data_id={dataField.id_pembeli}
-                        />
-                        <Button
-                          color="danger"
-                          className="fa fa-trash"
-                          onClick={this.onDelete}
-                          data_id={dataField.id_pembeli}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
+                {this.state.tabelItem
+                  ? this.filterField().map(dataField => {
+                      return (
+                        <tr key={dataField.id_pembeli}>
+                          <td>{dataField.id_pembeli}</td>
+                          <td>{dataField.nama}</td>
+                          <td>{dataField.alamat}</td>
+                          <td>{dataField.no_telp}</td>
+                          <td>
+                            <Button
+                              color="success"
+                              className="fa fa-edit mr-2"
+                              onClick={this.handleUpdate}
+                              data_id={dataField.id_pembeli}
+                            />
+                            <Button
+                              color="danger"
+                              className="fa fa-trash"
+                              onClick={this.onDelete}
+                              data_id={dataField.id_pembeli}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : null}
               </tbody>
             </Table>
           </CardBody>
