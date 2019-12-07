@@ -36,20 +36,26 @@ export default {
           url: "/tabel/pembeli"
         },
         {
-          name: "Pesanan",
-          url: "/tabel/pesanan"
-        },
-        {
           name: "Supllier",
           url: "/tabel/supplier"
-        },
-        {
-          name: "Transaksi",
-          url: "/tabel/transaksi"
         }
       ]
     },
-
+    {
+      name: "Transaksi",
+      url: "/transaksi/beli",
+      icon: "icon-star",
+      children: [
+        {
+          name: "Order",
+          url: "/transaksi/beli"
+        },
+        {
+          name: "Jual",
+          url: "/transaksi/jual"
+        }
+      ]
+    },
     // {
     //   title: true,
     //   name: "Jurnal",

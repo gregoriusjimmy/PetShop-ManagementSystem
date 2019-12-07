@@ -42,9 +42,11 @@ const User = React.lazy(() => import("./views/Users/User"));
 const Barang = React.lazy(() => import("./views/Tables/Barang/Barang"));
 const Supplier = React.lazy(() => import("./views/Tables/Supplier/Supplier"));
 const Pembeli = React.lazy(() => import("./views/Tables/Pembeli/Pembeli"));
-const Pesanan = React.lazy(() => import("./views/Tables/Pesanan/Pesanan"));
-const Transaksi = React.lazy(() =>
-  import("./views/Tables/Transaksi/Transaksi")
+const TransaksiBeli = React.lazy(() =>
+  import("./views/Tables/TransaksiBeli/TransaksiBeli")
+);
+const TransaksiJual = React.lazy(() =>
+  import("./views/Tables/TransaksiJual/TransaksiJual")
 );
 const Kasir = React.lazy(() => import("./views/Kasir/Kasir"));
 
@@ -56,8 +58,16 @@ const routes = [
   { path: "/tabel/barang", name: "Barang", component: Barang },
   { path: "/tabel/pembeli", name: "Pembeli", component: Pembeli },
   { path: "/tabel/supplier", name: "Supplier", component: Supplier },
-  { path: "/tabel/pesanan", name: "Pesanan", component: Pesanan },
-  { path: "/tabel/transaksi", name: "Transaksi", component: Transaksi },
+  {
+    path: "/transaksi/beli",
+    name: "Transaksi_Beli",
+    component: TransaksiBeli
+  },
+  {
+    path: "/transaksi/jual",
+    name: "Transaksi_Jual",
+    component: TransaksiJual
+  },
   { path: "/theme", exact: true, name: "Theme", component: Colors },
   { path: "/theme/colors", name: "Colors", component: Colors },
   { path: "/theme/typography", name: "Typography", component: Typography },

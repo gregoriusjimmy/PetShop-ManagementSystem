@@ -16,7 +16,60 @@ import {
 class Kasir extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      dataBarang: [],
+      kasir: {
+        id_pembeli: "",
+        kd_barang: "",
+        jumlah: "",
+        potongan: ""
+      }
+    };
   }
+  handleChangeKasir = event => {
+    const { value, name } = event.target;
+
+    this.setState(prevState => ({
+      kasir: {
+        ...prevState.kasir,
+        [name]: value
+      }
+    }));
+    console.log(this.state);
+  };
+  componentDidMount = () => {
+    this.readDataBarang();
+  };
+  readDataBarang = () => {
+    fetch("http://localhost:3001/item")
+      .then(response => {
+        if (response.status === 400) {
+          return alert("Failed to fetch data barang");
+        }
+        return response.json();
+      })
+      .then(data => {
+        this.setState({ dataBarang: data });
+      });
+  };
+
+  showNamaBarang = () => {
+    this.state.dataBarang.find(barang => {
+      if (barang.kd_barang === this.state.kasir.kd_barang) {
+        console.log(barang.nama_barang);
+        return barang.nama_barang;
+      }
+    });
+  };
+  // onSearchBarang = event => {
+  //   event.persist();
+  //   this.setState(prevState => ({
+  //     kasir: {
+  //       ...prevState.kasir,
+  //       kd_barang: event.target.value
+  //     }
+  //   }));
+  // };
 
   render() {
     return (
@@ -30,18 +83,14 @@ class Kasir extends React.Component {
               <Form className="form-horizontal">
                 <FormGroup row>
                   <Col md="3">
-                    <Label htmlFor="kd_transaksi">Kode Transaksi</Label>
+                    <Label htmlFor="id_pembeli">Id Pembeli</Label>
                   </Col>
                   <Col xs="12" md="9">
-                    <Input id="kd_transaksi" name="kd_transaksi" />
-                  </Col>
-                </FormGroup>
-                <FormGroup row>
-                  <Col md="3">
-                    <Label htmlFor="nama">Id Pembeli</Label>
-                  </Col>
-                  <Col xs="12" md="9">
-                    <Input id="nama" name="nama" />
+                    <Input
+                      id="id_pembeli"
+                      name="id_pembeli"
+                      onChange={this.handleChangeKasir}
+                    />
                   </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -49,7 +98,11 @@ class Kasir extends React.Component {
                     <Label htmlFor="kd_barang">Kode Barang</Label>
                   </Col>
                   <Col xs="12" md="9">
-                    <Input id="kd_barang" name="kd_barang" />
+                    <Input
+                      onChange={this.handleChangeKasir}
+                      id="kd_barang"
+                      name="kd_barang"
+                    />
                   </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -57,7 +110,11 @@ class Kasir extends React.Component {
                     <Label htmlFor="nama_barang">Barang</Label>
                   </Col>
                   <Col xs="12" md="9">
-                    <p className="form-control-static">nama barang</p>
+                    <p className="form-control-static">
+                      {this.state.kasir.kd_barang.length === 6
+                        ? `${this.showNamaBarang()}`
+                        : "nama barang"}
+                    </p>
                   </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -65,7 +122,11 @@ class Kasir extends React.Component {
                     <Label htmlFor="jumlah">Jumlah</Label>
                   </Col>
                   <Col xs="12" md="9">
-                    <Input id="jumlah" name="jumlah" />
+                    <Input
+                      id="jumlah"
+                      name="jumlah"
+                      onChange={this.handleChangeKasir}
+                    />
                   </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -78,10 +139,14 @@ class Kasir extends React.Component {
                 </FormGroup>
                 <FormGroup row>
                   <Col md="3">
-                    <Label htmlFor="diskon">Diskon</Label>
+                    <Label htmlFor="potongan">Potongan</Label>
                   </Col>
                   <Col xs="12" md="9">
-                    <Input id="diskon" name="diskon" />
+                    <Input
+                      id="potongan"
+                      name="potongan"
+                      onChange={this.handleChangeKasir}
+                    />
                   </Col>
                 </FormGroup>
                 <FormGroup row>

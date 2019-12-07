@@ -95,8 +95,8 @@ class Barang extends Component {
         kd_barang: this.state.kd_barang,
         nama_barang: this.state.nama_barang,
         satuan: this.state.satuan,
-        harga_beli: this.state.harga_jual,
-        harga_jual: this.state.harga_beli,
+        harga_jual: this.state.harga_jual,
+        harga_beli: this.state.harga_beli,
         stok_barang: this.state.stok_barang
       })
     })
@@ -120,8 +120,8 @@ class Barang extends Component {
         kd_barang: this.state.kd_barang,
         nama_barang: this.state.nama_barang,
         satuan: this.state.satuan,
-        harga_beli: this.state.harga_jual,
-        harga_jual: this.state.harga_beli,
+        harga_jual: this.state.harga_jual,
+        harga_beli: this.state.harga_beli,
         stok_barang: this.state.stok_barang
       })
     })
