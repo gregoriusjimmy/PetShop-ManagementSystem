@@ -10,9 +10,25 @@ import {
   Form,
   FormGroup,
   Label,
-  Input
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText
 } from "reactstrap";
 
+const initialState = {
+  dataBarang: [],
+  kasir: {
+    id_pembeli: "",
+    kd_barang: "",
+    jumlah: "",
+    harga_normal: "",
+    potongan: "",
+    harga_total: "",
+    diskon: "",
+    nama_barang: ""
+  }
+};
 class Kasir extends React.Component {
   constructor(props) {
     super(props);
@@ -69,10 +85,40 @@ class Kasir extends React.Component {
       );
     });
   };
-
+  onConfirmKasir = () => {
+    if (!this.state.kasir.harga_total) {
+      return alert("tekan tombol read terlebih dahulu");
+    }
+    fetch("http://localhost:3001/transaksi_jual", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id_pembeli: this.state.kasir.id_pembeli,
+        kd_barang: this.state.kasir.kd_barang,
+        jumlah: this.state.kasir.jumlah,
+        harga_normal: this.state.kasir.harga_normal,
+        potongan: this.state.kasir.potongan,
+        harga_total: this.state.kasir.harga_total
+      })
+    })
+      .then(response => {
+        if (response.status === 400) {
+          return alert("Transaksi gagal");
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert("Transaksi berhasil");
+        this.setState(initialState);
+        this.readDataBarang();
+      });
+  };
   onReadKasir = () => {
-    const { jumlah, diskon } = this.state.kasir;
+    const { jumlah, diskon, id_pembeli } = this.state.kasir;
     const barang = this.searchBarang();
+    if (!barang || !diskon || !jumlah || !id_pembeli) {
+      return alert("Harap mengisi semua input");
+    }
     const hargaTotal = barang.harga_jual.replace(/[^0-9.-]+/g, "") * jumlah;
 
     const potongan = (diskon / 100) * hargaTotal;
@@ -115,6 +161,7 @@ class Kasir extends React.Component {
                   </Col>
                   <Col xs="12" md="9">
                     <Input
+                      value={this.state.kasir.id_pembeli}
                       id="id_pembeli"
                       name="id_pembeli"
                       onChange={this.handleChangeKasir}
@@ -125,8 +172,9 @@ class Kasir extends React.Component {
                   <Col md="3">
                     <Label htmlFor="kd_barang">Kode Barang</Label>
                   </Col>
-                  <Col xs="9" md="6">
+                  <Col xs="9" md="9">
                     <Input
+                      value={this.state.kasir.kd_barang}
                       onChange={this.handleChangeKasir}
                       id="kd_barang"
                       name="kd_barang"
@@ -143,11 +191,9 @@ class Kasir extends React.Component {
                     <Label htmlFor="nama_barang">Barang</Label>
                   </Col>
                   <Col xs="12" md="9">
-                    <Suspense>
-                      <p className="form-control-static">
-                        {this.state.kasir.nama_barang}
-                      </p>
-                    </Suspense>
+                    <p className="form-control-static">
+                      {this.state.kasir.nama_barang}
+                    </p>
                   </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -156,6 +202,7 @@ class Kasir extends React.Component {
                   </Col>
                   <Col xs="12" md="9">
                     <Input
+                      value={this.state.kasir.jumlah}
                       id="jumlah"
                       name="jumlah"
                       onChange={this.handleChangeKasir}
@@ -176,12 +223,20 @@ class Kasir extends React.Component {
                   <Col md="3">
                     <Label htmlFor="diskon">Diskon</Label>
                   </Col>
-                  <Col xs="12" md="9">
-                    <Input
-                      id="diskon"
-                      name="diskon"
-                      onChange={this.handleChangeKasir}
-                    />
+                  <Col xs="12" md="5">
+                    <InputGroup>
+                      <Input
+                        value={this.state.kasir.diskon}
+                        id="diskon"
+                        name="diskon"
+                        onChange={this.handleChangeKasir}
+                      />
+                      <InputGroupAddon addonType="append">
+                        <InputGroupText>
+                          <i className="fa fa-percent"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
                   </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -209,20 +264,14 @@ class Kasir extends React.Component {
                     </p>
                   </Col>
                 </FormGroup>
-                <Button
-                  style={{ float: "right" }}
-                  color="success"
-                  onClick={this.onReadKasir}
-                >
-                  Read
-                </Button>
-                <Button
-                  style={{ float: "right" }}
-                  color="success"
-                  onClick={this.onConfirm}
-                >
-                  Confirm
-                </Button>
+                <FormGroup style={{ float: "right" }}>
+                  <Button color="primary" onClick={this.onReadKasir}>
+                    Read
+                  </Button>{" "}
+                  <Button color="success" onClick={this.onConfirmKasir}>
+                    Confirm
+                  </Button>
+                </FormGroup>
               </Form>
             </CardBody>
           </Card>
