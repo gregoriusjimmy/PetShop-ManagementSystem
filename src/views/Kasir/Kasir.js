@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import {
   Card,
   CardBody,
@@ -22,20 +22,28 @@ class Kasir extends React.Component {
         id_pembeli: "",
         kd_barang: "",
         jumlah: "",
-        potongan: ""
+        harga_normal: "",
+        potongan: "",
+        harga_total: "",
+        diskon: "",
+        nama_barang: ""
       }
     };
   }
   handleChangeKasir = event => {
     const { value, name } = event.target;
 
-    this.setState(prevState => ({
-      kasir: {
-        ...prevState.kasir,
-        [name]: value
+    this.setState(
+      prevState => ({
+        kasir: {
+          ...prevState.kasir,
+          [name]: value
+        }
+      }),
+      () => {
+        console.log(this.state);
       }
-    }));
-    console.log(this.state);
+    );
   };
   componentDidMount = () => {
     this.readDataBarang();
@@ -53,13 +61,33 @@ class Kasir extends React.Component {
       });
   };
 
-  showNamaBarang = () => {
-    this.state.dataBarang.find(barang => {
-      if (barang.kd_barang === this.state.kasir.kd_barang) {
-        console.log(barang.nama_barang);
-        return barang.nama_barang;
-      }
+  searchBarang = () => {
+    return this.state.dataBarang.find(barang => {
+      return (
+        barang.kd_barang.toUpperCase() ===
+        this.state.kasir.kd_barang.toUpperCase()
+      );
     });
+  };
+
+  onReadKasir = () => {
+    const { jumlah, diskon } = this.state.kasir;
+    const barang = this.searchBarang();
+    const hargaTotal = barang.harga_jual.replace(/[^0-9.-]+/g, "") * jumlah;
+
+    const potongan = (diskon / 100) * hargaTotal;
+
+    const hargaBersih = hargaTotal - potongan;
+
+    this.setState(prevState => ({
+      kasir: {
+        ...prevState.kasir,
+        harga_normal: `Rp${hargaTotal}.000`,
+        potongan: `Rp${potongan}.000`,
+        harga_total: `Rp${hargaBersih}.000`,
+        nama_barang: barang.nama_barang
+      }
+    }));
   };
   // onSearchBarang = event => {
   //   event.persist();
@@ -97,24 +125,29 @@ class Kasir extends React.Component {
                   <Col md="3">
                     <Label htmlFor="kd_barang">Kode Barang</Label>
                   </Col>
-                  <Col xs="12" md="9">
+                  <Col xs="9" md="6">
                     <Input
                       onChange={this.handleChangeKasir}
                       id="kd_barang"
                       name="kd_barang"
                     />
                   </Col>
+                  {/* <Col xs="3" md="3">
+                    <Button color="primary" onClick={this.searchNamaBarang}>
+                      <i className="fa fa-search"></i>
+                    </Button>
+                  </Col> */}
                 </FormGroup>
                 <FormGroup row>
                   <Col md="3">
                     <Label htmlFor="nama_barang">Barang</Label>
                   </Col>
                   <Col xs="12" md="9">
-                    <p className="form-control-static">
-                      {this.state.kasir.kd_barang.length === 6
-                        ? `${this.showNamaBarang()}`
-                        : "nama barang"}
-                    </p>
+                    <Suspense>
+                      <p className="form-control-static">
+                        {this.state.kasir.nama_barang}
+                      </p>
+                    </Suspense>
                   </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -134,7 +167,21 @@ class Kasir extends React.Component {
                     <Label htmlFor="harga_jual">Harga</Label>
                   </Col>
                   <Col xs="12" md="9">
-                    <p className="form-control-static">12000</p>
+                    <p className="form-control-static">
+                      {this.state.kasir.harga_normal}
+                    </p>
+                  </Col>
+                </FormGroup>
+                <FormGroup row>
+                  <Col md="3">
+                    <Label htmlFor="diskon">Diskon</Label>
+                  </Col>
+                  <Col xs="12" md="9">
+                    <Input
+                      id="diskon"
+                      name="diskon"
+                      onChange={this.handleChangeKasir}
+                    />
                   </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -142,11 +189,14 @@ class Kasir extends React.Component {
                     <Label htmlFor="potongan">Potongan</Label>
                   </Col>
                   <Col xs="12" md="9">
-                    <Input
+                    {/* <Input
                       id="potongan"
                       name="potongan"
                       onChange={this.handleChangeKasir}
-                    />
+                    /> */}
+                    <p className="form-control-static">
+                      {this.state.kasir.potongan}
+                    </p>
                   </Col>
                 </FormGroup>
                 <FormGroup row>
@@ -154,9 +204,25 @@ class Kasir extends React.Component {
                     <Label htmlFor="total">Total</Label>
                   </Col>
                   <Col xs="12" md="9">
-                    <p className="form-control-static">12000</p>
+                    <p className="form-control-static">
+                      {this.state.kasir.harga_total}
+                    </p>
                   </Col>
                 </FormGroup>
+                <Button
+                  style={{ float: "right" }}
+                  color="success"
+                  onClick={this.onReadKasir}
+                >
+                  Read
+                </Button>
+                <Button
+                  style={{ float: "right" }}
+                  color="success"
+                  onClick={this.onConfirm}
+                >
+                  Confirm
+                </Button>
               </Form>
             </CardBody>
           </Card>
