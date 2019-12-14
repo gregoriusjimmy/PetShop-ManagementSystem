@@ -100,18 +100,15 @@ class Kasir extends React.Component {
         potongan: this.state.kasir.potongan,
         harga_total: this.state.kasir.harga_total
       })
-    })
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Transaksi gagal");
-        }
-        return response.json();
-      })
-      .then(data => {
-        alert("Transaksi berhasil");
-        this.setState(initialState);
-        this.readDataBarang();
-      });
+    }).then(response => {
+      if (response.status === 400) {
+        return alert("Transaksi gagal");
+      }
+      alert("Transaksi berhasil");
+      this.setState(initialState);
+      this.readDataBarang();
+      return response.json();
+    });
   };
   onReadKasir = () => {
     const { jumlah, diskon, id_pembeli } = this.state.kasir;

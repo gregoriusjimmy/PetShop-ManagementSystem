@@ -3,7 +3,8 @@ export default {
     {
       name: "Kasir",
       url: "/kasir",
-      icon: "icon-speedometer"
+      icon: "icon-speedometer",
+      variant: "success"
       // badge: {
       //   variant: "info",
       //   text: "NEW"
@@ -66,20 +67,20 @@ export default {
     // },
     {
       name: "Jurnal",
-      url: "/base",
-      icon: "icon-puzzle",
-      children: [
-        {
-          name: "Breadcrumbs",
-          url: "/base/breadcrumbs",
-          icon: "icon-puzzle"
-        },
-        {
-          name: "Cards",
-          url: "/base/cards",
-          icon: "icon-puzzle"
-        }
-      ]
+      url: "/jurnal",
+      icon: "icon-puzzle"
+      // children: [
+      //   {
+      //     name: "Breadcrumbs",
+      //     url: "/base/breadcrumbs",
+      //     icon: "icon-puzzle"
+      //   },
+      //   {
+      //     name: "Cards",
+      //     url: "/base/cards",
+      //     icon: "icon-puzzle"
+      //   }
+      // ]
     },
 
     {
@@ -115,6 +116,14 @@ export default {
           icon: "icon-star"
         }
       ]
+    },
+    {
+      name: "Beli",
+
+      url: "/beli",
+      icon: "icon-speedometer",
+      class: "mt-auto",
+      variant: "info"
     }
     // {
     //   name: "Disabled",
