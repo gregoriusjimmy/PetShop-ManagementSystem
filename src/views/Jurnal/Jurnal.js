@@ -6,15 +6,12 @@ import {
   Table,
   Col,
   Row,
-  CardHeader,
   Button,
   Form,
   FormGroup,
   Label,
   Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText
+  CardHeader
 } from "reactstrap";
 
 const initialState = {
@@ -28,7 +25,9 @@ const initialState = {
   debit: "",
   kredit: "",
   jenis_transaksi: "",
-  jumlah_uang: ""
+  jumlah_uang: "",
+  startDate: "",
+  endDate: ""
 };
 class Jurnal extends Component {
   constructor(props) {
@@ -44,7 +43,9 @@ class Jurnal extends Component {
       debit: "",
       kredit: "",
       jenis_transaksi: "",
-      jumlah_uang: ""
+      jumlah_uang: "",
+      startDate: "",
+      endDate: ""
     };
   }
 
@@ -58,16 +59,18 @@ class Jurnal extends Component {
       })
       .then(data => {
         this.setState({ tabelItem: data }, () => {
-          console.log(this.state.tabelItem);
+          this.state.tabelItem.forEach(dataField => {
+            const newDate = new Date(dataField.tgl_transaksi);
+            const convertToTime = newDate.getTime();
+            Object.assign(dataField, { newDateInTime: convertToTime });
+          });
         });
       });
   };
   handleChange = event => {
     const { value, name } = event.target;
 
-    this.setState({ [name]: value }, () => {
-      console.log(this.state.tgl_transaksi);
-    });
+    this.setState({ [name]: value });
   };
   handleChangeNamaAkun = event => {
     const { value, name } = event.target;
@@ -81,7 +84,6 @@ class Jurnal extends Component {
     });
   };
   onAdd = async () => {
-    console.log(this.state.jenis_transaksi);
     if (this.state.jenis_transaksi === "DEBIT") {
       await this.setState({ debit: this.state.jumlah_uang });
     } else if (this.state.jenis_transaksi === "KREDIT") {
@@ -90,6 +92,15 @@ class Jurnal extends Component {
       return alert("Pilih jenis transaksi");
     }
 
+    if (
+      !this.state.nama_akun ||
+      !this.state.tgl_transaksi ||
+      !this.state.jumlah_uang ||
+      !this.state.kd_transaksi ||
+      !this.state.no_akun
+    ) {
+      return alert("harap isi semua field");
+    }
     fetch("http://localhost:3001/jurnal", {
       method: "post",
       headers: { "Content-Type": "application/json" },
@@ -118,6 +129,40 @@ class Jurnal extends Component {
   componentDidMount() {
     this.readData();
   }
+  convertDate = date => {
+    const d = new Date(date);
+    let month = "" + (d.getMonth() + 1);
+    let day = "" + d.getDate();
+    let year = d.getFullYear();
+
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+
+    return [year, month, day].join("-");
+  };
+
+  filterField = () => {
+    const { tabelItem, startDate, endDate } = this.state;
+    let startDateInTime = "";
+    let endDateInTime = "";
+    if (startDate) {
+      let convertStartDate = new Date(startDate);
+      startDateInTime = convertStartDate.getTime();
+    }
+    if (endDate) {
+      let convertEndDate = new Date(endDate);
+      endDateInTime = convertEndDate.getTime();
+    }
+    return tabelItem.filter(field => {
+      if (startDate && endDate) {
+        return (
+          field.newDateInTime > startDateInTime &&
+          field.newDateInTime < endDateInTime
+        );
+      }
+      return true;
+    });
+  };
 
   render() {
     return (
@@ -242,20 +287,29 @@ class Jurnal extends Component {
           </CardBody>
         </Card>
         <Row>
-          <Col md={5}>
+          <Col md={7}>
             <Card>
+              <CardHeader>Filter tanggal</CardHeader>
               <CardBody>
-                <InputGroup>
-                  <Input
-                    onChange={this.onSearchChange}
-                    placeholder="filter tanggal"
-                  />
-                  <InputGroupAddon addonType="append">
-                    <InputGroupText>
-                      <i className="fa fa-search"></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                </InputGroup>
+                <Row>
+                  <Col md={5}>
+                    <Input
+                      name="startDate"
+                      type="date"
+                      onChange={this.handleChange}
+                    />
+                  </Col>
+                  <Col md={2}>
+                    <Label>sampai</Label>
+                  </Col>
+                  <Col md={5}>
+                    <Input
+                      name="endDate"
+                      type="date"
+                      onChange={this.handleChange}
+                    />
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
           </Col>
@@ -276,11 +330,11 @@ class Jurnal extends Component {
               </thead>
               <tbody>
                 {this.state.tabelItem
-                  ? this.state.tabelItem.map(dataField => {
+                  ? this.filterField().map(dataField => {
                       return (
                         <tr key={dataField.no_transaksi}>
                           <td>{dataField.kd_transaksi}</td>
-                          <td>{dataField.tgl_transaksi}</td>
+                          <td>{this.convertDate(dataField.tgl_transaksi)}</td>
                           <td>{dataField.no_akun}</td>
                           <td>{dataField.nama_akun}</td>
                           <td>{dataField.keterangan}</td>
