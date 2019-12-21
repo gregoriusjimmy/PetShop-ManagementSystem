@@ -14,6 +14,12 @@ import {
   InputGroupAddon,
   InputGroupText
 } from "reactstrap";
+import {
+  utilsOnRead,
+  utilsOnAdd,
+  utilsOnDelete,
+  utilsOnUpdate
+} from "../../../utils/crud.utils";
 const initialState = {
   tabelItem: [],
   kd_barang: "",
@@ -37,19 +43,62 @@ class Barang extends Component {
       searchField: ""
     };
   }
+  componentDidMount() {
+    this.readData();
+  }
 
-  readData = () => {
-    fetch("http://localhost:3001/item")
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to fetch");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState({ tabelItem: data });
-      });
+  refresh = status => {
+    if (status === 200) {
+      this.setState(initialState);
+      this.readData();
+    }
   };
+
+  readData = async () => {
+    const source = "http://localhost:3001/item";
+    const data = await utilsOnRead(source);
+    if (data) {
+      this.setState({ tabelItem: data });
+    }
+  };
+
+  onDelete = async event => {
+    const source = "http://localhost:3001/item";
+    const dataSend = { kd_barang: event.target.attributes.data_id.value };
+    const status = await utilsOnDelete(source, dataSend);
+    this.refresh(status);
+  };
+  onAdd = async () => {
+    const source = "http://localhost:3001/item";
+    const dataSend = {
+      kd_barang: this.state.kd_barang,
+      nama_barang: this.state.nama_barang,
+      satuan: this.state.satuan,
+      harga_jual: this.state.harga_jual,
+      harga_beli: this.state.harga_beli,
+      stok_barang: this.state.stok_barang
+    };
+    const status = await utilsOnAdd(source, dataSend);
+    this.refresh(status);
+  };
+  onUpdate = async () => {
+    const { nama_barang, harga_beli, harga_jual } = this.state;
+    if (!nama_barang || !harga_beli || !harga_jual) {
+      return alert("field tidak bolek kosong");
+    }
+    const source = "http://localhost:3001/item";
+    const dataSend = {
+      kd_barang: this.state.kd_barang,
+      nama_barang: this.state.nama_barang,
+      satuan: this.state.satuan,
+      harga_jual: this.state.harga_jual,
+      harga_beli: this.state.harga_beli,
+      stok_barang: this.state.stok_barang
+    };
+    const status = await utilsOnUpdate(source, dataSend);
+    this.refresh(status);
+  };
+
   handleChange = event => {
     const { value, name } = event.target;
 
@@ -69,76 +118,6 @@ class Barang extends Component {
       stok_barang: found.stok_barang
     });
   };
-  onDelete = event => {
-    fetch("http://localhost:3001/item", {
-      method: "delete",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        kd_barang: event.target.attributes.data_id.value
-      })
-    })
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to delete");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.readData();
-      });
-  };
-  onAdd = () => {
-    fetch("http://localhost:3001/item", {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        kd_barang: this.state.kd_barang,
-        nama_barang: this.state.nama_barang,
-        satuan: this.state.satuan,
-        harga_jual: this.state.harga_jual,
-        harga_beli: this.state.harga_beli,
-        stok_barang: this.state.stok_barang
-      })
-    })
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to add");
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log(data);
-        this.setState(initialState);
-        this.readData();
-      });
-  };
-  onUpdate = () => {
-    fetch("http://localhost:3001/item", {
-      method: "put",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        kd_barang: this.state.kd_barang,
-        nama_barang: this.state.nama_barang,
-        satuan: this.state.satuan,
-        harga_jual: this.state.harga_jual,
-        harga_beli: this.state.harga_beli,
-        stok_barang: this.state.stok_barang
-      })
-    })
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to update");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState(initialState);
-        this.readData();
-      });
-  };
-  componentDidMount() {
-    this.readData();
-  }
   onSearchChange = event => {
     this.setState({ searchField: event.target.value });
     console.log(event.target.value);
