@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import {
   Card,
   CardBody,
@@ -14,13 +15,15 @@ import {
   InputGroupAddon,
   InputGroupText
 } from "reactstrap";
+
 import {
   utilsOnRead,
   utilsOnAdd,
   utilsOnDelete,
   utilsOnUpdate
 } from "../../../utils/crud.utils";
-const initialState = {
+
+const INITIAL_STATE = {
   tabelItem: [],
   kd_barang: "",
   nama_barang: "",
@@ -29,6 +32,7 @@ const initialState = {
   harga_beli: "",
   stok_barang: ""
 };
+const SOURCE = "http://localhost:3001/item";
 class Barang extends Component {
   constructor(props) {
     super(props);
@@ -49,27 +53,28 @@ class Barang extends Component {
 
   refresh = status => {
     if (status === 200) {
-      this.setState(initialState);
+      this.setState(INITIAL_STATE);
       this.readData();
     }
   };
 
   readData = async () => {
-    const source = "http://localhost:3001/item";
-    const data = await utilsOnRead(source);
+    const data = await utilsOnRead(SOURCE);
     if (data) {
       this.setState({ tabelItem: data });
     }
   };
 
   onDelete = async event => {
-    const source = "http://localhost:3001/item";
     const dataSend = { kd_barang: event.target.attributes.data_id.value };
-    const status = await utilsOnDelete(source, dataSend);
+    const status = await utilsOnDelete(SOURCE, dataSend);
     this.refresh(status);
   };
   onAdd = async () => {
-    const source = "http://localhost:3001/item";
+    const { kd_barang, nama_barang, harga_beli, harga_jual } = this.state;
+    if (!kd_barang || !nama_barang || !harga_beli || !harga_jual) {
+      return alert("field tidak boleh kosong");
+    }
     const dataSend = {
       kd_barang: this.state.kd_barang,
       nama_barang: this.state.nama_barang,
@@ -78,15 +83,14 @@ class Barang extends Component {
       harga_beli: this.state.harga_beli,
       stok_barang: this.state.stok_barang
     };
-    const status = await utilsOnAdd(source, dataSend);
+    const status = await utilsOnAdd(SOURCE, dataSend);
     this.refresh(status);
   };
   onUpdate = async () => {
     const { nama_barang, harga_beli, harga_jual } = this.state;
     if (!nama_barang || !harga_beli || !harga_jual) {
-      return alert("field tidak bolek kosong");
+      return alert("field tidak boleh kosong");
     }
-    const source = "http://localhost:3001/item";
     const dataSend = {
       kd_barang: this.state.kd_barang,
       nama_barang: this.state.nama_barang,
@@ -95,7 +99,7 @@ class Barang extends Component {
       harga_beli: this.state.harga_beli,
       stok_barang: this.state.stok_barang
     };
-    const status = await utilsOnUpdate(source, dataSend);
+    const status = await utilsOnUpdate(SOURCE, dataSend);
     this.refresh(status);
   };
 

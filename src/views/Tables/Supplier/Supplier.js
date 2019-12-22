@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+
 import {
   Card,
   CardBody,
@@ -11,13 +12,23 @@ import {
   Label,
   Input
 } from "reactstrap";
-const initialState = {
+
+import {
+  utilsOnRead,
+  utilsOnAdd,
+  utilsOnDelete,
+  utilsOnUpdate
+} from "../../../utils/crud.utils";
+
+const INITIAL_STATE = {
   tabelItem: [],
   id_supplier: "",
   nama_supplier: "",
   alamat: "",
   no_telp: ""
 };
+
+const SOURCE = "http://localhost:3001/supplier";
 
 class Supplier extends Component {
   constructor(props) {
@@ -30,26 +41,66 @@ class Supplier extends Component {
       no_telp: ""
     };
   }
-  readData = () => {
-    fetch("http://localhost:3001/supplier")
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to fetch");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState({ tabelItem: data });
-      });
-  };
+
   componentDidMount() {
     this.readData();
   }
+
+  refresh = status => {
+    if (status === 200) {
+      this.setState(INITIAL_STATE);
+      this.readData();
+    }
+  };
+  readData = async () => {
+    const data = await utilsOnRead(SOURCE);
+    if (data) {
+      this.setState({ tabelItem: data });
+    }
+  };
+
+  onDelete = async event => {
+    const dataSend = { id_supplier: event.target.attributes.data_id.value };
+    const status = await utilsOnDelete(SOURCE, dataSend);
+    this.refresh(status);
+  };
+
+  onAdd = async () => {
+    const { id_supplier, nama_supplier, alamat, no_telp } = this.state;
+    if (!id_supplier || !nama_supplier || !alamat || !no_telp) {
+      return alert("field tidak boleh kosong");
+    }
+    const dataSend = {
+      id_supplier: this.state.id_supplier,
+      nama_supplier: this.state.nama_supplier,
+      alamat: this.state.alamat,
+      no_telp: this.state.no_telp
+    };
+    const status = await utilsOnAdd(SOURCE, dataSend);
+    this.refresh(status);
+  };
+
+  onUpdate = async () => {
+    const { nama_supplier, alamat, no_telp } = this.state;
+    if (!nama_supplier || !alamat || !no_telp) {
+      return alert("field tidak boleh kosong");
+    }
+    const dataSend = {
+      id_supplier: this.state.id_supplier,
+      nama_supplier: this.state.nama_supplier,
+      alamat: this.state.alamat,
+      no_telp: this.state.no_telp
+    };
+    const status = await utilsOnUpdate(SOURCE, dataSend);
+    this.refresh(status);
+  };
+
   handleChange = event => {
     const { value, name } = event.target;
 
     this.setState({ [name]: value });
   };
+
   handleUpdate = event => {
     const dataId = event.target.attributes.data_id.value;
     const found = this.state.tabelItem.find(dataField => {
@@ -62,70 +113,7 @@ class Supplier extends Component {
       no_telp: found.no_telp
     });
   };
-  onDelete = event => {
-    fetch("http://localhost:3001/supplier", {
-      method: "delete",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id_supplier: event.target.attributes.data_id.value
-      })
-    })
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to delete");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.readData();
-      });
-  };
-  onAdd = () => {
-    fetch("http://localhost:3001/supplier", {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id_supplier: this.state.id_supplier,
-        nama_supplier: this.state.nama_supplier,
-        alamat: this.state.alamat,
-        no_telp: this.state.no_telp
-      })
-    })
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to add");
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log(data);
-        this.setState(initialState);
-        this.readData();
-      });
-  };
-  onUpdate = () => {
-    fetch("http://localhost:3001/supplier", {
-      method: "put",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id_supplier: this.state.id_supplier,
-        nama_supplier: this.state.nama_supplier,
-        alamat: this.state.alamat,
-        no_telp: this.state.no_telp
-      })
-    })
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to update");
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log(data);
-        this.setState(initialState);
-        this.readData();
-      });
-  };
+
   render() {
     return (
       <div className="animated fadeIn">

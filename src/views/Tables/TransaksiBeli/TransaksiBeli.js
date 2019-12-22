@@ -1,25 +1,9 @@
 import React, { Component } from "react";
-import {
-  Card,
-  CardBody,
-  Table,
-  // Col,
-  // Row,
-  Button
-  // Form,
-  // FormGroup,
-  // Label,
-  // Input
-} from "reactstrap";
-// const initialState = {
-//   tabelItem: [],
-//   kd_order: "",
-//   tgl_order: "",
-//   id_supplier: "",
-//   kd_barang: "",
-//   jumlah: ""
-// };
+import { Card, CardBody, Table } from "reactstrap";
 
+import { utilsOnRead } from "../../../utils/crud.utils";
+
+const SOURCE = "http://localhost:3001/transaksi_beli";
 class TransaksiBeli extends Component {
   constructor(props) {
     super(props);
@@ -27,21 +11,17 @@ class TransaksiBeli extends Component {
       tabelItem: []
     };
   }
-  readData = () => {
-    fetch("http://localhost:3001/transaksi_beli")
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to fetch");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState({ tabelItem: data });
-      });
-  };
+
   componentDidMount() {
     this.readData();
   }
+
+  readData = async () => {
+    const data = await utilsOnRead(SOURCE);
+    if (data) {
+      this.setState({ tabelItem: data });
+    }
+  };
 
   render() {
     return (

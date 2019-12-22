@@ -1,8 +1,7 @@
-import React, { Suspense } from "react";
+import React from "react";
 import {
   Card,
   CardBody,
-  Table,
   Col,
   Row,
   CardHeader,
@@ -16,7 +15,9 @@ import {
   InputGroupText
 } from "reactstrap";
 
-const initialState = {
+import { utilsOnRead, utilsOnAdd } from "../../utils/crud.utils";
+
+const INITIAL_STATE = {
   dataBarang: [],
   kasir: {
     id_pembeli: "",
@@ -46,74 +47,58 @@ class Kasir extends React.Component {
       }
     };
   }
-  handleChangeKasir = event => {
-    const { value, name } = event.target;
 
-    this.setState(
-      prevState => ({
-        kasir: {
-          ...prevState.kasir,
-          [name]: value
-        }
-      }),
-      () => {
-        console.log(this.state);
-      }
-    );
-  };
   componentDidMount = () => {
     this.readDataBarang();
   };
-  readDataBarang = () => {
-    fetch("http://localhost:3001/item")
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to fetch data barang");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState({ dataBarang: data });
-      });
+
+  refresh = status => {
+    if (status === 200) {
+      this.setState(INITIAL_STATE);
+      this.readDataBarang();
+    }
   };
 
-  searchBarang = () => {
-    return this.state.dataBarang.find(barang => {
-      return (
-        barang.kd_barang.toUpperCase() ===
-        this.state.kasir.kd_barang.toUpperCase()
-      );
-    });
+  readDataBarang = async () => {
+    const data = await utilsOnRead("http://localhost:3001/item");
+    if (data) {
+      this.setState({ dataBarang: data });
+    } else {
+      return alert("Failed to fetch data barang");
+    }
   };
-  onConfirmKasir = () => {
+
+  onConfirmKasir = async () => {
     if (!this.state.kasir.harga_total) {
       return alert("tekan tombol read terlebih dahulu");
     }
-    fetch("http://localhost:3001/transaksi_jual", {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id_pembeli: this.state.kasir.id_pembeli,
-        kd_barang: this.state.kasir.kd_barang,
-        jumlah: this.state.kasir.jumlah,
-        harga_normal: this.state.kasir.harga_normal,
-        potongan: this.state.kasir.potongan,
-        harga_total: this.state.kasir.harga_total
-      })
-    }).then(response => {
-      if (response.status === 400) {
-        return alert("Transaksi gagal");
-      }
+    const dataSend = {
+      id_pembeli: this.state.kasir.id_pembeli,
+      kd_barang: this.state.kasir.kd_barang,
+      jumlah: this.state.kasir.jumlah,
+      harga_normal: this.state.kasir.harga_normal,
+      potongan: this.state.kasir.potongan,
+      harga_total: this.state.kasir.harga_total
+    };
+    const status = await utilsOnAdd(
+      "http://localhost:3001/transaksi_jual",
+      dataSend
+    );
+    if (status === 200) {
       alert("Transaksi berhasil");
-      this.setState(initialState);
-      this.readDataBarang();
-      return response.json();
-    });
+    } else {
+      return alert("Transaksi gagal");
+    }
+    this.refresh(status);
   };
+
   onReadKasir = () => {
     const { jumlah, diskon, id_pembeli } = this.state.kasir;
     const barang = this.searchBarang();
-    if (!barang || !diskon || !jumlah || !id_pembeli) {
+    if (!barang) {
+      return alert("Barang tidak ditemukan");
+    }
+    if (!diskon || !jumlah || !id_pembeli) {
       return alert("Harap mengisi semua input");
     }
     const hargaTotal = barang.harga_jual.replace(/[^0-9.-]+/g, "") * jumlah;
@@ -132,15 +117,25 @@ class Kasir extends React.Component {
       }
     }));
   };
-  // onSearchBarang = event => {
-  //   event.persist();
-  //   this.setState(prevState => ({
-  //     kasir: {
-  //       ...prevState.kasir,
-  //       kd_barang: event.target.value
-  //     }
-  //   }));
-  // };
+
+  handleChangeKasir = event => {
+    const { value, name } = event.target;
+    this.setState(prevState => ({
+      kasir: {
+        ...prevState.kasir,
+        [name]: value
+      }
+    }));
+  };
+
+  searchBarang = () => {
+    return this.state.dataBarang.find(barang => {
+      return (
+        barang.kd_barang.toUpperCase() ===
+        this.state.kasir.kd_barang.toUpperCase()
+      );
+    });
+  };
 
   render() {
     return (

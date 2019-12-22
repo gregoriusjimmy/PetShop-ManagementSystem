@@ -12,7 +12,9 @@ import {
   Input
 } from "reactstrap";
 
-const initialState = {
+import { utilsOnRead, utilsOnAdd } from "../../utils/crud.utils";
+
+const INITIAL_STATE = {
   dataBarang: [],
   beliBarang: {
     id_supplier: "",
@@ -37,67 +39,55 @@ class Pesan extends Component {
       }
     };
   }
-  handleChangeBeli = event => {
-    const { value, name } = event.target;
 
-    this.setState(prevState => ({
-      beliBarang: {
-        ...prevState.beliBarang,
-        [name]: value
-      }
-    }));
-  };
   componentDidMount = () => {
     this.readDataBarang();
   };
-  readDataBarang = () => {
-    fetch("http://localhost:3001/item")
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to fetch data barang");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState({ dataBarang: data }, () => console.log(this.state));
-      });
+
+  refresh = status => {
+    if (status === 200) {
+      this.setState(INITIAL_STATE);
+      this.readDataBarang();
+    }
+  };
+  readDataBarang = async () => {
+    const data = await utilsOnRead("http://localhost:3001/item");
+    if (data) {
+      this.setState({ dataBarang: data });
+    } else {
+      return alert("Failed to fetch data barang");
+    }
   };
 
-  onConfirmBeli = () => {
+  onConfirmBeli = async () => {
     if (!this.state.beliBarang.harga_total) {
       return alert("tekan tombol read terlebih dahulu");
     }
-    fetch("http://localhost:3001/transaksi_beli", {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id_supplier: this.state.beliBarang.id_supplier,
-        kd_barang: this.state.beliBarang.kd_barang,
-        jumlah: this.state.beliBarang.jumlah,
-        harga_total: this.state.beliBarang.harga_total
-      })
-    }).then(response => {
-      if (response.status === 400) {
-        return alert("Transaksi gagal");
-      }
+    const dataSend = {
+      id_supplier: this.state.beliBarang.id_supplier,
+      kd_barang: this.state.beliBarang.kd_barang,
+      jumlah: this.state.beliBarang.jumlah,
+      harga_total: this.state.beliBarang.harga_total
+    };
+    const status = await utilsOnAdd(
+      "http://localhost:3001/transaksi_beli",
+      dataSend
+    );
+    if (status === 200) {
       alert("Transaksi berhasil");
-      this.setState(initialState);
-      this.readDataBarang();
-      return response.json();
-    });
+    } else {
+      return alert("Transaksi gagal");
+    }
+    this.refresh(status);
   };
-  searchBarang = () => {
-    return this.state.dataBarang.find(barang => {
-      return (
-        barang.kd_barang.toUpperCase() ===
-        this.state.beliBarang.kd_barang.toUpperCase()
-      );
-    });
-  };
+
   onReadBeli = () => {
     const { jumlah, id_supplier } = this.state.beliBarang;
     const barang = this.searchBarang();
-    if (!barang || !jumlah || !id_supplier) {
+    if (!barang) {
+      return alert("Barang tidak ditemukan");
+    }
+    if (!jumlah || !id_supplier) {
       return alert("Harap mengisi semua input");
     }
     const hargaTotal = barang.harga_jual.replace(/[^0-9.-]+/g, "") * jumlah;
@@ -109,11 +99,30 @@ class Pesan extends Component {
     this.setState(prevState => ({
       beliBarang: {
         ...prevState.beliBarang,
-
         harga_total: `Rp${hargaTotal}.000`,
         nama_barang: barang.nama_barang
       }
     }));
+  };
+
+  handleChangeBeli = event => {
+    const { value, name } = event.target;
+
+    this.setState(prevState => ({
+      beliBarang: {
+        ...prevState.beliBarang,
+        [name]: value
+      }
+    }));
+  };
+
+  searchBarang = () => {
+    return this.state.dataBarang.find(barang => {
+      return (
+        barang.kd_barang.toUpperCase() ===
+        this.state.beliBarang.kd_barang.toUpperCase()
+      );
+    });
   };
 
   render() {
