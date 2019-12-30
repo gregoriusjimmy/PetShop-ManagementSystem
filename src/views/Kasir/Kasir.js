@@ -80,16 +80,42 @@ class Kasir extends React.Component {
       potongan: this.state.kasir.potongan,
       harga_total: this.state.kasir.harga_total
     };
-    const status = await utilsOnAdd(
+
+    const generateKodeTransaksi = `SELL_${Math.floor(
+      1000 + Math.random() * 8999
+    )}`;
+
+    const dataSendJurnalKas = {
+      kd_transaksi: generateKodeTransaksi,
+      tgl_transaksi: new Date(),
+      no_akun: 11,
+      nama_akun: "KAS",
+      keterangan: "Kas pada pendapatan",
+      debit: this.state.kasir.harga_total
+    };
+    const dataSendJurnalPendapatan = {
+      kd_transaksi: generateKodeTransaksi,
+      tgl_transaksi: new Date(),
+      no_akun: 41,
+      nama_akun: "PENDAPATAN",
+      keterangan: `Menjual ${this.state.kasir.nama_barang} sebanyak ${this.state.kasir.jumlah}`,
+      kredit: this.state.kasir.harga_total
+    };
+
+    const statusTransaksi = await utilsOnAdd(
       "http://localhost:3001/transaksi_jual",
       dataSend
     );
-    if (status === 200) {
+    console.log(dataSendJurnalKas);
+    console.log(dataSendJurnalPendapatan);
+    if (statusTransaksi === 200) {
+      utilsOnAdd("http://localhost:3001/jurnal", dataSendJurnalKas);
+      utilsOnAdd("http://localhost:3001/jurnal", dataSendJurnalPendapatan);
       alert("Transaksi berhasil");
     } else {
       return alert("Transaksi gagal");
     }
-    this.refresh(status);
+    this.refresh(statusTransaksi);
   };
 
   onReadKasir = () => {
