@@ -14,20 +14,22 @@ import {
   CardHeader
 } from "reactstrap";
 
-const initialState = {
+import { utilsOnAdd, utilsOnRead } from "../../utils/crud.utils";
+
+const INITIAL_STATE = {
   tabelItem: [],
   data_akun: DATA_AKUN,
-  kd_transaksi: "",
-  tgl_transaksi: "",
+  // kd_transaksi: "",
+  // tgl_transaksi: "",
   no_akun: "",
   nama_akun: "",
   keterangan: "",
   debit: "",
   kredit: "",
   jenis_transaksi: "",
-  jumlah_uang: "",
-  startDate: "",
-  endDate: ""
+  jumlah_uang: ""
+  // startDate: "",
+  // endDate: ""
 };
 class Jurnal extends Component {
   constructor(props) {
@@ -49,23 +51,25 @@ class Jurnal extends Component {
     };
   }
 
-  readData = () => {
-    fetch("http://localhost:3001/jurnal")
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to fetch");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState({ tabelItem: data }, () => {
-          this.state.tabelItem.forEach(dataField => {
-            const newDate = new Date(dataField.tgl_transaksi);
-            const convertToTime = newDate.getTime();
-            Object.assign(dataField, { newDateInTime: convertToTime });
-          });
+  refresh = status => {
+    if (status === 200) {
+      this.setState(INITIAL_STATE);
+      this.readData();
+    }
+  };
+  readData = async () => {
+    const data = await utilsOnRead("http://localhost:3001/jurnal");
+    if (data) {
+      this.setState({ tabelItem: data }, () => {
+        this.state.tabelItem.forEach(dataField => {
+          const newDate = new Date(dataField.tgl_transaksi);
+          const convertToTime = newDate.getTime();
+          Object.assign(dataField, { newDateInTime: convertToTime });
         });
       });
+    } else {
+      return alert("Failed to fetch data barang");
+    }
   };
   handleChange = event => {
     const { value, name } = event.target;
@@ -101,29 +105,22 @@ class Jurnal extends Component {
     ) {
       return alert("harap isi semua field");
     }
-    fetch("http://localhost:3001/jurnal", {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        kd_transaksi: this.state.kd_transaksi,
-        tgl_transaksi: this.state.tgl_transaksi,
-        no_akun: this.state.no_akun,
-        nama_akun: this.state.nama_akun,
-        keterangan: this.state.keterangan,
-        debit: this.state.debit,
-        kredit: this.state.kredit
-      })
-    })
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to add");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState(initialState);
-        this.readData();
-      });
+    const dataSend = {
+      kd_transaksi: this.state.kd_transaksi,
+      tgl_transaksi: this.state.tgl_transaksi,
+      no_akun: this.state.no_akun,
+      nama_akun: this.state.nama_akun,
+      keterangan: this.state.keterangan
+    };
+
+    if (this.state.debit) {
+      dataSend.debit = this.state.debit;
+    } else {
+      dataSend.kredit = this.state.kredit;
+    }
+
+    const status = await utilsOnAdd("http://localhost:3001/jurnal", dataSend);
+    this.refresh(status);
   };
 
   componentDidMount() {

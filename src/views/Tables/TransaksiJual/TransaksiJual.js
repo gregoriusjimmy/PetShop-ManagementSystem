@@ -1,17 +1,9 @@
 import React, { Component } from "react";
-import {
-  Card,
-  CardBody,
-  Table,
-  // Col,
-  // Row,
-  Button
-  // Form,
-  // FormGroup,
-  // Label,
-  // Input
-} from "reactstrap";
+import { Card, CardBody, Table } from "reactstrap";
 
+import { utilsOnRead } from "../../../utils/crud.utils";
+
+const SOURCE = "http://localhost:3001/transaksi_jual";
 class Transaksi extends Component {
   constructor(props) {
     super(props);
@@ -19,18 +11,14 @@ class Transaksi extends Component {
       tabelItem: []
     };
   }
-  readData = () => {
-    fetch("http://localhost:3001/transaksi_jual")
-      .then(response => {
-        if (response.status === 400) {
-          return alert("Failed to fetch");
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState({ tabelItem: data });
-      });
+
+  readData = async () => {
+    const data = await utilsOnRead(SOURCE);
+    if (data) {
+      this.setState({ tabelItem: data });
+    }
   };
+
   componentDidMount() {
     this.readData();
   }
