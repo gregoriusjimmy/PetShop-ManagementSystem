@@ -15,6 +15,7 @@ import {
 import InputHutang from "./input-hutang";
 
 import { utilsOnRead, utilsOnAdd } from "../../utils/crud.utils";
+import { formatMoneyOnChange, formatMoney } from "../../utils/utils";
 
 const INITIAL_STATE = {
   dataBarang: [],
@@ -67,17 +68,29 @@ class Pesan extends Component {
   };
 
   onConfirmBeli = async () => {
-    if (!this.state.beliBarang.harga_total || !this.state.beliBarang.metode) {
+    const {
+      harga_total,
+      metode,
+      id_supplier,
+      kd_barang,
+      jumlah,
+      nama_barang,
+      dpBeliValue
+    } = this.state.beliBarang;
+
+    if (!harga_total || !metode) {
       return alert("tekan tombol read terlebih dahulu");
     }
+
     const generateKodeTransaksi = `SELL_${Math.floor(
       1000 + Math.random() * 8999
     )}`;
+
     const dataSend = {
-      id_supplier: this.state.beliBarang.id_supplier,
-      kd_barang: this.state.beliBarang.kd_barang,
-      jumlah: this.state.beliBarang.jumlah,
-      harga_total: this.state.beliBarang.harga_total
+      id_supplier: id_supplier,
+      kd_barang: kd_barang,
+      jumlah: jumlah,
+      harga_total: harga_total
     };
 
     const dataSendJurnalKas = {
@@ -87,56 +100,59 @@ class Pesan extends Component {
       nama_akun: "KAS",
       keterangan: "Kas pada perlengkapan"
     };
+
     const dataSendJurnalPerlengkapan = {
       kd_transaksi: generateKodeTransaksi,
       tgl_transaksi: new Date(),
       no_akun: 13,
       nama_akun: "PERLENGKAPAN",
-      keterangan: `Membeli ${this.state.beliBarang.nama_barang} sebanyak ${this.state.beliBarang.jumlah}`
+      keterangan: `Membeli ${nama_barang} sebanyak ${jumlah}`
     };
+
     const dataSendJurnalHutang = {
       kd_transaksi: generateKodeTransaksi,
       tgl_transaksi: new Date(),
       no_akun: 21,
       nama_akun: "HUTANG DAGANG",
-      keterangan: `Hutang kepada ${this.state.beliBarang.id_supplier}`
+      keterangan: `Hutang kepada ${id_supplier}`
     };
-    if (this.state.beliBarang.metode === "tunai") {
-      dataSendJurnalKas.kredit = this.state.beliBarang.harga_total;
-      dataSendJurnalPerlengkapan.debit = this.state.beliBarang.harga_total;
-    } else {
-      const hargaTotal = this.state.beliBarang.harga_total.replace(
-        /[Rp.]+/g,
-        ""
-      );
 
-      if (!this.state.beliBarang.dpBeliValue) {
+    if (metode === "tunai") {
+      dataSendJurnalKas.kredit = harga_total;
+      dataSendJurnalPerlengkapan.debit = harga_total;
+    } else {
+      const hargaTotal = harga_total.replace(/[Rp.]+/g, "");
+
+      if (!dpBeliValue) {
         return alert("dp tidak boleh kosong ");
       }
-      const hutang = hargaTotal - this.state.beliBarang.dpBeliValue;
+      const hutang = hargaTotal - dpBeliValue.replace(/[Rp.]+/g, "");
       if (hutang <= 0) {
         return alert("dp melebihi harga total");
       }
       dataSendJurnalHutang.kredit = hutang;
-      dataSendJurnalKas.kredit = this.state.beliBarang.dpBeliValue;
-      dataSendJurnalPerlengkapan.debit = this.state.beliBarang.harga_total;
+      dataSendJurnalKas.kredit = dpBeliValue;
+      dataSendJurnalPerlengkapan.debit = harga_total;
     }
 
     const status = await utilsOnAdd(
       "http://localhost:3001/transaksi_beli",
       dataSend
     );
+
     if (status === 200) {
       utilsOnAdd("http://localhost:3001/jurnal", dataSendJurnalKas);
       utilsOnAdd("http://localhost:3001/jurnal", dataSendJurnalPerlengkapan);
-      if (this.state.beliBarang.metode === "hutang") {
+
+      if (metode === "hutang") {
         utilsOnAdd("http://localhost:3001/jurnal", dataSendJurnalHutang);
       }
+
       alert("Transaksi berhasil");
+      this.refresh(status);
     } else {
       return alert("Transaksi gagal");
     }
-    this.refresh(status);
   };
 
   onReadBeli = () => {
@@ -148,7 +164,7 @@ class Pesan extends Component {
     if (!jumlah || !id_supplier) {
       return alert("Harap mengisi semua input");
     }
-    const hargaTotal = barang.harga_jual.replace(/[^0-9.-]+/g, "") * jumlah;
+    const hargaTotal = barang.harga_jual.replace(/[Rp.]+/g, "") * jumlah;
 
     // const potongan = (diskon / 100) * hargaTotal;
 
@@ -157,7 +173,7 @@ class Pesan extends Component {
     this.setState(prevState => ({
       beliBarang: {
         ...prevState.beliBarang,
-        harga_total: `Rp${hargaTotal}.000`,
+        harga_total: `Rp${formatMoney(hargaTotal)}`,
         nama_barang: barang.nama_barang
       }
     }));
@@ -170,6 +186,17 @@ class Pesan extends Component {
       beliBarang: {
         ...prevState.beliBarang,
         [name]: value
+      }
+    }));
+  };
+
+  handleChangeMoney = event => {
+    const { value, name } = event.target;
+    const formatedMoney = formatMoneyOnChange(value);
+    this.setState(prevState => ({
+      beliBarang: {
+        ...prevState.beliBarang,
+        [name]: formatedMoney
       }
     }));
   };
@@ -296,7 +323,7 @@ class Pesan extends Component {
                 </FormGroup>
                 {this.state.beliBarang.metode === "hutang" ? (
                   <InputHutang
-                    handleChange={this.handleChangeBeli}
+                    handleChange={this.handleChangeMoney}
                     dpBeliValue={this.state.beliBarang.dpBeliValue}
                   />
                 ) : null}

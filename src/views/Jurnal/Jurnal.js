@@ -15,6 +15,7 @@ import {
 } from "reactstrap";
 
 import { utilsOnAdd, utilsOnRead } from "../../utils/crud.utils";
+import { formatMoneyOnChange } from "../../utils/utils";
 
 const INITIAL_STATE = {
   tabelItem: [],
@@ -73,9 +74,15 @@ class Jurnal extends Component {
   };
   handleChange = event => {
     const { value, name } = event.target;
-
     this.setState({ [name]: value });
   };
+
+  handleChangeMoney = event => {
+    const { value, name } = event.target;
+    const formatedMoney = formatMoneyOnChange(value);
+    this.setState({ [name]: formatedMoney });
+  };
+
   handleChangeNamaAkun = event => {
     const { value, name } = event.target;
 
@@ -272,7 +279,7 @@ class Jurnal extends Component {
                       value={this.state.jumlah_uang}
                       name="jumlah_uang"
                       id="jumlah_uang"
-                      onChange={this.handleChange}
+                      onChange={this.handleChangeMoney}
                     ></Input>
                   </FormGroup>
                 </Col>
@@ -287,6 +294,33 @@ class Jurnal extends Component {
           <Col md={7}>
             <Card>
               <CardHeader>Filter tanggal</CardHeader>
+              <CardBody>
+                <Row>
+                  <Col md={5}>
+                    <Input
+                      name="startDate"
+                      type="date"
+                      onChange={this.handleChange}
+                    />
+                  </Col>
+                  <Col md={2}>
+                    <Label>sampai</Label>
+                  </Col>
+                  <Col md={5}>
+                    <Input
+                      name="endDate"
+                      type="date"
+                      onChange={this.handleChange}
+                    />
+                  </Col>
+                </Row>
+              </CardBody>
+            </Card>
+          </Col>
+          {/* FILTER NAMA AKUN */}
+          <Col md={7}>
+            <Card>
+              <CardHeader>Filter nama akun</CardHeader>
               <CardBody>
                 <Row>
                   <Col md={5}>

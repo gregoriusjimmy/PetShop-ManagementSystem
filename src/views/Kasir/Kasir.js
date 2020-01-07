@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 
 import { utilsOnRead, utilsOnAdd } from "../../utils/crud.utils";
-
+import { formatMoney } from "../../utils/utils";
 const INITIAL_STATE = {
   dataBarang: [],
   kasir: {
@@ -127,7 +127,7 @@ class Kasir extends React.Component {
     if (!diskon || !jumlah || !id_pembeli) {
       return alert("Harap mengisi semua input");
     }
-    const hargaTotal = barang.harga_jual.replace(/[^0-9.-]+/g, "") * jumlah;
+    const hargaTotal = barang.harga_jual.replace(/[Rp.]+/g, "") * jumlah;
 
     const potongan = (diskon / 100) * hargaTotal;
 
@@ -136,9 +136,9 @@ class Kasir extends React.Component {
     this.setState(prevState => ({
       kasir: {
         ...prevState.kasir,
-        harga_normal: `Rp${hargaTotal}.000`,
-        potongan: `Rp${potongan}.000`,
-        harga_total: `Rp${hargaBersih}.000`,
+        harga_normal: `Rp${formatMoney(hargaTotal)}`,
+        potongan: `Rp${formatMoney(potongan)}`,
+        harga_total: `Rp${formatMoney(hargaBersih)}`,
         nama_barang: barang.nama_barang
       }
     }));
