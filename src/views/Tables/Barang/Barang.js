@@ -23,6 +23,8 @@ import {
   utilsOnUpdate
 } from "../../../utils/crud.utils";
 
+import { formatMoneyOnChange } from "../../../utils/utils";
+
 const INITIAL_STATE = {
   tabelItem: [],
   kd_barang: "",
@@ -108,6 +110,13 @@ class Barang extends Component {
 
     this.setState({ [name]: value });
   };
+
+  handleChangeMoney = event => {
+    const { value, name } = event.target;
+    const formatedMoney = formatMoneyOnChange(value);
+    this.setState({ [name]: formatedMoney });
+  };
+
   handleUpdate = event => {
     const dataId = event.target.attributes.data_id.value;
     const found = this.state.tabelItem.find(dataField => {
@@ -175,6 +184,7 @@ class Barang extends Component {
                       id="satuan"
                       onChange={this.handleChange}
                     >
+                      <option value="0">select..</option>
                       <option value="KG">KG</option>
                       <option value="PCS">PCS</option>
                     </Input>
@@ -187,7 +197,7 @@ class Barang extends Component {
                       value={this.state.harga_jual}
                       name="harga_jual"
                       id="harga_jual"
-                      onChange={this.handleChange}
+                      onChange={this.handleChangeMoney}
                     ></Input>
                   </FormGroup>
                 </Col>
@@ -198,7 +208,7 @@ class Barang extends Component {
                       value={this.state.harga_beli}
                       name="harga_beli"
                       id="harga_beli"
-                      onChange={this.handleChange}
+                      onChange={this.handleChangeMoney}
                     ></Input>
                   </FormGroup>
                 </Col>
@@ -209,7 +219,7 @@ class Barang extends Component {
                       value={this.state.stok_barang}
                       name="stok_barang"
                       id="stok_barang"
-                      onChange={this.handleChange}
+                      onChange={this.handleChangeMoney}
                     ></Input>
                   </FormGroup>
                 </Col>
