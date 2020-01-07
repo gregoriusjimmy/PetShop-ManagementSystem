@@ -123,7 +123,7 @@ class Pesan extends Component {
     } else {
       const hargaTotal = harga_total.replace(/[Rp.]+/g, "");
 
-      if (dpBeliValue) {
+      if (!dpBeliValue) {
         return alert("dp tidak boleh kosong ");
       }
       const hutang = hargaTotal - dpBeliValue.replace(/[Rp.]+/g, "");
