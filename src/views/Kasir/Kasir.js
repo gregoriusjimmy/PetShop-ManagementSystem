@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 
 import { utilsOnRead, utilsOnAdd } from "../../utils/crud.utils";
-
+import { formatMoney, formatMoneyOnChange } from "../../utils/utils";
 const INITIAL_STATE = {
   dataBarang: [],
   kasir: {
@@ -127,7 +127,7 @@ class Kasir extends React.Component {
     if (!diskon || !jumlah || !id_pembeli) {
       return alert("Harap mengisi semua input");
     }
-    const hargaTotal = barang.harga_jual.replace(/[^0-9.-]+/g, "") * jumlah;
+    const hargaTotal = barang.harga_jual.replace(/[Rp.]+/g, "") * jumlah;
 
     const potongan = (diskon / 100) * hargaTotal;
 

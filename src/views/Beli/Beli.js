@@ -148,7 +148,7 @@ class Pesan extends Component {
     if (!jumlah || !id_supplier) {
       return alert("Harap mengisi semua input");
     }
-    const hargaTotal = barang.harga_jual.replace(/[^0-9.-]+/g, "") * jumlah;
+    const hargaTotal = barang.harga_jual.replace(/[Rp.]+/g, "") * jumlah;
 
     // const potongan = (diskon / 100) * hargaTotal;
 
