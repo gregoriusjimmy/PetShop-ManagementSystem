@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import {
+  Table,
   Card,
   CardBody,
   Col,
@@ -12,6 +13,7 @@ import {
   Input
 } from "reactstrap";
 
+import "./beli.styles.scss";
 import InputHutang from "./input-hutang";
 
 import { utilsOnRead, utilsOnAdd } from "../../utils/crud.utils";
@@ -19,6 +21,9 @@ import { formatMoneyOnChange, formatMoney } from "../../utils/utils";
 
 const INITIAL_STATE = {
   dataBarang: [],
+  dataSupplier: [],
+  cariBarang: "",
+  cariSupplier: "",
   beliBarang: {
     id_supplier: "",
     kd_barang: "",
@@ -35,6 +40,9 @@ class Pesan extends Component {
     super(props);
     this.state = {
       dataBarang: [],
+      dataSupplier: [],
+      cariBarang: "",
+      cariSupplier: "",
       beliBarang: {
         id_supplier: "",
         kd_barang: "",
@@ -49,19 +57,21 @@ class Pesan extends Component {
   }
 
   componentDidMount = () => {
-    this.readDataBarang();
+    this.readData();
   };
 
   refresh = status => {
     if (status === 200) {
       this.setState(INITIAL_STATE);
-      this.readDataBarang();
+      this.readData();
     }
   };
-  readDataBarang = async () => {
-    const data = await utilsOnRead("http://localhost:3001/item");
-    if (data) {
-      this.setState({ dataBarang: data });
+  readData = async () => {
+    const dataBarang = await utilsOnRead("http://localhost:3001/item");
+    const dataSupplier = await utilsOnRead("http://localhost:3001/supplier");
+    console.log(dataSupplier);
+    if (dataBarang && dataSupplier) {
+      this.setState({ dataBarang: dataBarang, dataSupplier: dataSupplier });
     } else {
       return alert("Failed to fetch data barang");
     }
@@ -189,7 +199,11 @@ class Pesan extends Component {
       }
     }));
   };
+  handleChange = event => {
+    const { value, name } = event.target;
 
+    this.setState({ [name]: value });
+  };
   handleChangeMoney = event => {
     const { value, name } = event.target;
     const formatedMoney = formatMoneyOnChange(value);
@@ -209,7 +223,20 @@ class Pesan extends Component {
       );
     });
   };
-
+  filterBarang = () => {
+    const { dataBarang, cariBarang } = this.state;
+    return dataBarang.filter(field => {
+      return field.nama_barang.toUpperCase().includes(cariBarang.toUpperCase());
+    });
+  };
+  filterSupplier = () => {
+    const { dataSupplier, cariSupplier } = this.state;
+    return dataSupplier.filter(field => {
+      return field.nama_supplier
+        .toUpperCase()
+        .includes(cariSupplier.toUpperCase());
+    });
+  };
   render() {
     return (
       <Row>
@@ -336,6 +363,69 @@ class Pesan extends Component {
                   </Button>
                 </FormGroup>
               </Form>
+            </CardBody>
+          </Card>
+        </Col>
+        <Col md="6">
+          <Card>
+            <CardHeader>
+              <strong>Data Barang</strong>
+            </CardHeader>
+            <CardBody>
+              <Input
+                value={this.state.cariBarang}
+                id="cariBarang"
+                name="cariBarang"
+                placeholder="cari barang.."
+                onChange={this.handleChange}
+              />
+              <div className="my-custom-scrollbar">
+                <Table responsive>
+                  <tbody>
+                    {this.state.dataBarang
+                      ? this.filterBarang().map(dataField => {
+                          return (
+                            <tr key={dataField.kd_barang}>
+                              <td>{dataField.nama_barang}</td>
+                              <td>{dataField.kd_barang}</td>
+                            </tr>
+                          );
+                        })
+                      : null}
+                  </tbody>
+                </Table>
+              </div>
+            </CardBody>
+          </Card>
+          {/* SUPPLIER */}
+          <Card>
+            <CardHeader>
+              <strong>Data Supplier</strong>
+            </CardHeader>
+            <CardBody>
+              <Input
+                value={this.state.cariSupplier}
+                id="cariSupplier"
+                name="cariSupplier"
+                placeholder="cari supplier.."
+                onChange={this.handleChange}
+              />
+              <div className="my-custom-scrollbar">
+                <Table responsive>
+                  <tbody>
+                    {this.state.dataSupplier
+                      ? this.filterSupplier().map(dataField => {
+                          return (
+                            <tr key={dataField.id_supplier}>
+                              <td>{dataField.nama_supplier}</td>
+                              <td>{dataField.id_supplier}</td>
+                            </tr>
+                          );
+                        })
+                      : null}
+                  </tbody>
+                </Table>
+              </div>
             </CardBody>
           </Card>
         </Col>

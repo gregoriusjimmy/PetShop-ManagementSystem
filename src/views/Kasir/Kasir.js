@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Table,
   Card,
   CardBody,
   Col,
@@ -14,11 +15,14 @@ import {
   InputGroupAddon,
   InputGroupText
 } from "reactstrap";
-
+import "./kasir.styles.scss";
 import { utilsOnRead, utilsOnAdd } from "../../utils/crud.utils";
 import { formatMoney } from "../../utils/utils";
 const INITIAL_STATE = {
   dataBarang: [],
+  dataPembeli: [],
+  cariBarang: "",
+  cariPembeli: "",
   kasir: {
     id_pembeli: "",
     kd_barang: "",
@@ -35,6 +39,9 @@ class Kasir extends React.Component {
     super(props);
     this.state = {
       dataBarang: [],
+      dataPembeli: [],
+      cariBarang: "",
+      cariPembeli: "",
       kasir: {
         id_pembeli: "",
         kd_barang: "",
@@ -49,20 +56,21 @@ class Kasir extends React.Component {
   }
 
   componentDidMount = () => {
-    this.readDataBarang();
+    this.readData();
   };
 
   refresh = status => {
     if (status === 200) {
       this.setState(INITIAL_STATE);
-      this.readDataBarang();
+      this.readData();
     }
   };
 
-  readDataBarang = async () => {
-    const data = await utilsOnRead("http://localhost:3001/item");
-    if (data) {
-      this.setState({ dataBarang: data });
+  readData = async () => {
+    const dataBarang = await utilsOnRead("http://localhost:3001/item");
+    const dataPembeli = await utilsOnRead("http://localhost:3001/pembeli");
+    if (dataBarang && dataPembeli) {
+      this.setState({ dataBarang: dataBarang, dataPembeli: dataPembeli });
     } else {
       return alert("Failed to fetch data barang");
     }
@@ -153,7 +161,11 @@ class Kasir extends React.Component {
       }
     }));
   };
+  handleChange = event => {
+    const { value, name } = event.target;
 
+    this.setState({ [name]: value });
+  };
   searchBarang = () => {
     return this.state.dataBarang.find(barang => {
       return (
@@ -163,6 +175,18 @@ class Kasir extends React.Component {
     });
   };
 
+  filterBarang = () => {
+    const { dataBarang, cariBarang } = this.state;
+    return dataBarang.filter(field => {
+      return field.nama_barang.toUpperCase().includes(cariBarang.toUpperCase());
+    });
+  };
+  filterPembeli = () => {
+    const { dataPembeli, cariPembeli } = this.state;
+    return dataPembeli.filter(field => {
+      return field.nama.toUpperCase().includes(cariPembeli.toUpperCase());
+    });
+  };
   render() {
     return (
       <Row>
@@ -291,6 +315,69 @@ class Kasir extends React.Component {
                   </Button>
                 </FormGroup>
               </Form>
+            </CardBody>
+          </Card>
+        </Col>
+        <Col md="6">
+          <Card>
+            <CardHeader>
+              <strong>Data Barang</strong>
+            </CardHeader>
+            <CardBody>
+              <Input
+                value={this.state.cariBarang}
+                id="cariBarang"
+                name="cariBarang"
+                placeholder="cari barang.."
+                onChange={this.handleChange}
+              />
+              <div className="my-custom-scrollbar">
+                <Table responsive>
+                  <tbody>
+                    {this.state.dataBarang
+                      ? this.filterBarang().map(dataField => {
+                          return (
+                            <tr key={dataField.kd_barang}>
+                              <td>{dataField.nama_barang}</td>
+                              <td>{dataField.kd_barang}</td>
+                            </tr>
+                          );
+                        })
+                      : null}
+                  </tbody>
+                </Table>
+              </div>
+            </CardBody>
+          </Card>
+          {/* CUSTOMER */}
+          <Card>
+            <CardHeader>
+              <strong>Data Customer</strong>
+            </CardHeader>
+            <CardBody>
+              <Input
+                value={this.state.cariPembeli}
+                id="cariPembeli"
+                name="cariPembeli"
+                placeholder="cari customer.."
+                onChange={this.handleChange}
+              />
+              <div className="my-custom-scrollbar">
+                <Table responsive>
+                  <tbody>
+                    {this.state.dataPembeli
+                      ? this.filterPembeli().map(dataField => {
+                          return (
+                            <tr key={dataField.id_pembeli}>
+                              <td>{dataField.nama}</td>
+                              <td>{dataField.id_pembeli}</td>
+                            </tr>
+                          );
+                        })
+                      : null}
+                  </tbody>
+                </Table>
+              </div>
             </CardBody>
           </Card>
         </Col>
