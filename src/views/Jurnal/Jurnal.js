@@ -15,7 +15,7 @@ import {
 } from "reactstrap";
 
 import { utilsOnAdd, utilsOnRead } from "../../utils/crud.utils";
-import { formatMoneyOnChange } from "../../utils/utils";
+import { formatMoneyOnChange, formatMoney } from "../../utils/utils";
 
 const INITIAL_STATE = {
   tabelItem: [],
@@ -28,7 +28,9 @@ const INITIAL_STATE = {
   debit: "",
   kredit: "",
   jenis_transaksi: "",
-  jumlah_uang: ""
+  jumlah_uang: "",
+  totalKredit: "",
+  totalDebit: ""
   // startDate: "",
   // endDate: ""
 };
@@ -47,6 +49,8 @@ class Jurnal extends Component {
       kredit: "",
       jenis_transaksi: "",
       jumlah_uang: "",
+      totalKredit: "",
+      totalDebit: "",
       startDate: "",
       endDate: ""
     };
@@ -144,7 +148,37 @@ class Jurnal extends Component {
 
     return [year, month, day].join("-");
   };
+  calculateTotal = () => {
+    const { tabelItem, startDate, endDate } = this.state;
+    const filteredDebit = [];
+    const filteredKredit = [];
+    let totalKredit = 0;
+    let totalDebit = 0;
+    const data = tabelItem.filter(field => {
+      return true;
+    });
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].debit) {
+        filteredDebit.push(data[i].debit);
+      } else {
+        filteredKredit.push(data[i].kredit);
+      }
+    }
+    for (let i = 0; i < filteredDebit.length; i++) {
+      let money = parseInt(filteredDebit[i].replace(/[Rp.]+/g, ""));
+      console.log(money);
+      let total = money + totalDebit;
+      totalDebit = total;
+    }
 
+    for (let i = 0; i < filteredKredit.length; i++) {
+      let money = parseInt(filteredKredit[i].replace(/[Rp.]+/g, ""));
+      console.log(money);
+      let total = money + totalKredit;
+      totalKredit = total;
+    }
+    return { totalDebit: totalDebit, totalKredit: totalKredit };
+  };
   filterField = () => {
     const { tabelItem, startDate, endDate } = this.state;
     let startDateInTime = "";
@@ -157,8 +191,14 @@ class Jurnal extends Component {
       let convertEndDate = new Date(endDate);
       endDateInTime = convertEndDate.getTime();
     }
+
     return tabelItem.filter(field => {
       if (startDate && endDate) {
+        //        if (field.debit) {
+        //   filteredDebit.push(field.debit);
+        // } else {
+        //   filteredKredit.push(field.kredit);
+        // }
         return (
           field.newDateInTime > startDateInTime &&
           field.newDateInTime < endDateInTime
@@ -375,6 +415,28 @@ class Jurnal extends Component {
                       );
                     })
                   : null}
+                <tr>
+                  <td colSpan="4" style={{ textAlign: "right" }}>
+                    <h6>
+                      <strong>Total</strong>
+                    </h6>
+                  </td>
+                  <td colSpan="1"></td>
+                  <td>
+                    <h6>
+                      <strong>{`Rp${formatMoney(
+                        this.calculateTotal().totalDebit
+                      )}`}</strong>
+                    </h6>
+                  </td>
+                  <td>
+                    <h6>
+                      <strong>{`Rp${formatMoney(
+                        this.calculateTotal().totalKredit
+                      )}`}</strong>
+                    </h6>
+                  </td>
+                </tr>
               </tbody>
             </Table>
           </CardBody>
