@@ -82,6 +82,11 @@ export default {
       //   }
       // ]
     },
+    {
+      name: "Perkiraan",
+      url: "/perkiraan",
+      icon: "icon-puzzle"
+    },
 
     {
       divider: true

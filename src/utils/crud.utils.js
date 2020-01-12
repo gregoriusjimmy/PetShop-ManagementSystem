@@ -5,6 +5,7 @@ export const utilsOnRead = async source => {
     return null;
   }
   const data = await response.json();
+
   return data;
 };
 
