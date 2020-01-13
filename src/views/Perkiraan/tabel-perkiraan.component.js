@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, CardBody, Table, Col, Row } from "reactstrap";
+import { formatMoney } from "../../utils/utils";
 class TabelPerkiraan extends React.Component {
   constructor(props) {
     super(props);
@@ -16,8 +17,38 @@ class TabelPerkiraan extends React.Component {
 
     return [year, month, day].join("-");
   };
+
+  calculateSaldo = perkiraan => {
+    //perkiraan is an array
+    let debit = [];
+    let kredit = [];
+    perkiraan.forEach(element => {
+      if (element.debit) {
+        debit.push(parseInt(element.debit.replace(/[Rp.]+/g, "")));
+      } else {
+        kredit.push(parseInt(element.kredit.replace(/[Rp.]+/g, "")));
+      }
+    });
+    const totalDebit = debit.reduce((a, b) => a + b, 0);
+    const totalKredit = kredit.reduce((a, b) => a + b, 0);
+
+    const saldo = totalDebit - totalKredit;
+
+    if (saldo < 0) {
+      const formatedSaldo = formatMoney(Math.abs(saldo));
+      return { jenis: "KREDIT", saldo: formatedSaldo };
+    } else {
+      const formatedSaldo = formatMoney(saldo);
+      return {
+        jenis: "DEBIT",
+        saldo: formatedSaldo
+      };
+    }
+  };
+
   render() {
     const { perkiraan } = this.props;
+    const saldoObj = this.calculateSaldo(perkiraan);
     return (
       <div>
         <Card>
@@ -54,6 +85,15 @@ class TabelPerkiraan extends React.Component {
                 })}
               </tbody>
             </Table>
+            <Row>
+              <Col md={6}></Col>
+              <Col>
+                <h5>{`Saldo ${saldoObj.jenis}:  `}</h5>
+              </Col>
+              <Col>
+                <h5>{`Rp${saldoObj.saldo}`}</h5>
+              </Col>
+            </Row>
           </CardBody>
         </Card>
       </div>

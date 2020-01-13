@@ -16,7 +16,7 @@ import {
   AppNavbarBrand,
   AppSidebarToggler
 } from "@coreui/react";
-import logo from "../../assets/img/brand/logo.svg";
+import logo from "../../assets/img/brand/PettoShop.svg";
 import sygnet from "../../assets/img/brand/sygnet.svg";
 
 const propTypes = {
@@ -34,9 +34,10 @@ class DefaultHeader extends Component {
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
         <AppNavbarBrand
-          full={{ src: logo, width: 89, height: 25, alt: "CoreUI Logo" }}
+          full={{ src: logo, width: 200, height: 50, alt: "CoreUI Logo" }}
           minimized={{ src: sygnet, width: 30, height: 30, alt: "CoreUI Logo" }}
         />
+
         <AppSidebarToggler className="d-md-down-none" display="lg" />
 
         <Nav className="d-md-down-none" navbar>
@@ -74,12 +75,12 @@ class DefaultHeader extends Component {
           <UncontrolledDropdown nav direction="down">
             <DropdownToggle nav>
               <img
-                src={"../../assets/img/avatars/6.jpg"}
+                src={"../../assets/img/avatars/manager.jpg"}
                 className="img-avatar"
                 alt="admin@bootstrapmaster.com"
               />
             </DropdownToggle>
-            <DropdownMenu right>
+            {/* <DropdownMenu right>
               <DropdownItem header tag="div" className="text-center">
                 <strong>Account</strong>
               </DropdownItem>
@@ -123,7 +124,7 @@ class DefaultHeader extends Component {
               <DropdownItem onClick={e => this.props.onLogout(e)}>
                 <i className="fa fa-lock"></i> Logout
               </DropdownItem>
-            </DropdownMenu>
+            </DropdownMenu> */}
           </UncontrolledDropdown>
         </Nav>
         {/* <AppAsideToggler className="d-md-down-none" /> */}

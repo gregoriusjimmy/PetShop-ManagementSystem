@@ -3,7 +3,7 @@ export default {
     {
       name: "Kasir",
       url: "/kasir",
-      icon: "icon-speedometer",
+      icon: "icon-credit-card",
       variant: "success"
       // badge: {
       //   variant: "info",
@@ -26,7 +26,7 @@ export default {
     {
       name: "Tabel",
       url: "/tables/barang",
-      icon: "icon-drop",
+      icon: "icon-layers",
       children: [
         {
           name: "Barang",
@@ -45,7 +45,7 @@ export default {
     {
       name: "Transaksi",
       url: "/transaksi/beli",
-      icon: "icon-star",
+      icon: "icon-note",
       children: [
         {
           name: "Order",
@@ -67,8 +67,7 @@ export default {
     // },
     {
       name: "Jurnal",
-      url: "/jurnal",
-      icon: "icon-puzzle"
+      url: "/jurnal"
       // children: [
       //   {
       //     name: "Breadcrumbs",
@@ -84,8 +83,7 @@ export default {
     },
     {
       name: "Perkiraan",
-      url: "/perkiraan",
-      icon: "icon-puzzle"
+      url: "/perkiraan"
     },
 
     {
@@ -126,7 +124,7 @@ export default {
       name: "Beli",
 
       url: "/beli",
-      icon: "icon-speedometer",
+      icon: "icon-credit-card",
       class: "mt-auto",
       variant: "info"
     }
