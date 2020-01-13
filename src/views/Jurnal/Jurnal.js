@@ -98,7 +98,7 @@ class Jurnal extends Component {
       });
     });
   };
-  
+
   onAdd = async () => {
     if (this.state.jenis_transaksi === "DEBIT") {
       await this.setState({ debit: this.state.jumlah_uang });
@@ -152,7 +152,7 @@ class Jurnal extends Component {
   };
 
   calculateTotal = () => {
-    const { tabelItem, startDate, endDate } = this.state;
+    const { tabelItem } = this.state;
     const filteredDebit = [];
     const filteredKredit = [];
     let totalKredit = 0;
@@ -362,32 +362,6 @@ class Jurnal extends Component {
             </Card>
           </Col>
           {/* FILTER NAMA AKUN */}
-          <Col md={7}>
-            <Card>
-              <CardHeader>Filter nama akun</CardHeader>
-              <CardBody>
-                <Row>
-                  <Col md={5}>
-                    <Input
-                      name="startDate"
-                      type="date"
-                      onChange={this.handleChange}
-                    />
-                  </Col>
-                  <Col md={2}>
-                    <Label>sampai</Label>
-                  </Col>
-                  <Col md={5}>
-                    <Input
-                      name="endDate"
-                      type="date"
-                      onChange={this.handleChange}
-                    />
-                  </Col>
-                </Row>
-              </CardBody>
-            </Card>
-          </Col>
         </Row>
         <Card>
           <CardBody>

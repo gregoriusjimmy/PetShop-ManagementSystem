@@ -18,7 +18,9 @@ class Perkiraan extends React.Component {
   constructor() {
     super();
     this.state = {
-      dataPerkiraan: []
+      dataPerkiraan: [],
+      startDate: "",
+      endDate: ""
     };
   }
 
@@ -44,7 +46,27 @@ class Perkiraan extends React.Component {
     return items;
   };
   handleSet = async () => {
-    const data = await utilsOnRead("http://localhost:3001/perkiraan");
+    const { startDate, endDate } = this.state;
+    let convertStartDate = "";
+    let convertEndDate = "";
+    let data = null;
+    const source = "http://localhost:3001/perkiraan";
+    if (startDate && endDate) {
+      convertStartDate = new Date(startDate);
+      convertEndDate = new Date(endDate);
+      const response = await fetch(source, {
+        method: "post",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          startDate: convertStartDate,
+          endDate: convertEndDate
+        })
+      });
+      data = await response.json();
+    } else {
+      data = await utilsOnRead(source);
+    }
+
     if (data) {
       const sortedData = this.bubbleSort(data);
       this.setState({ dataPerkiraan: sortedData }, () =>
