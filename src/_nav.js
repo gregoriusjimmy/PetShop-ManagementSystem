@@ -57,6 +57,13 @@ export default {
         }
       ]
     },
+    {
+      divider: true
+    },
+    {
+      title: true,
+      name: "Akuntansi"
+    },
     // {
     //   title: true,
     //   name: "Jurnal",
@@ -84,6 +91,10 @@ export default {
     {
       name: "Perkiraan",
       url: "/perkiraan"
+    },
+    {
+      name: "Laporan",
+      url: "/laporan"
     },
 
     {

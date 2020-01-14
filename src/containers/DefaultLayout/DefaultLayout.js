@@ -4,7 +4,7 @@ import * as router from "react-router-dom";
 import { Container } from "reactstrap";
 
 import {
-  AppAside,
+  // AppAside,
   AppFooter,
   AppHeader,
   AppSidebar,

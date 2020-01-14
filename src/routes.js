@@ -52,6 +52,7 @@ const Kasir = React.lazy(() => import("./views/Kasir/Kasir"));
 const Beli = React.lazy(() => import("./views/Beli/Beli"));
 const Jurnal = React.lazy(() => import("./views/Jurnal/Jurnal"));
 const Perkiraan = React.lazy(() => import("./views/Perkiraan/Perkiraan"));
+const Laporan = React.lazy(() => import("./views/Laporan/Laporan"));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -81,6 +82,11 @@ const routes = [
     path: "/perkiraan",
     name: "Perkiraan",
     component: Perkiraan
+  },
+  {
+    path: "/laporan",
+    name: "Laporan",
+    component: Laporan
   },
   { path: "/theme", exact: true, name: "Theme", component: Colors },
   { path: "/theme/colors", name: "Colors", component: Colors },

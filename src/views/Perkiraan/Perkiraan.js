@@ -2,15 +2,15 @@ import React from "react";
 import {
   Card,
   CardBody,
-  Table,
+  // Table,
   Col,
   Row,
   Button,
   Form,
-  FormGroup,
   Label,
   Input,
-  CardHeader
+  CardHeader,
+  FormGroup
 } from "reactstrap";
 import { formatMoney } from "../../utils/utils";
 import { utilsOnRead } from "../../utils/crud.utils";
@@ -23,7 +23,12 @@ class Perkiraan extends React.Component {
       dataSaldoAll: [],
       totalDebitKreditModal: null,
       startDate: "",
-      endDate: ""
+      endDate: "",
+      namaLaporan: "",
+      idLaporan: "",
+      tglLaporan: "",
+      dataPerkiraanSend: [],
+      dataSaldoAllSend: []
     };
   }
   calculateSaldoAll = dataPerkiraan => {
@@ -76,7 +81,6 @@ class Perkiraan extends React.Component {
     dataSaldoAll.forEach(dataSaldo => {
       debit.push(parseInt(dataSaldo.total_debit.replace(/[Rp.]+/g, "")));
       kredit.push(parseInt(dataSaldo.total_kredit.replace(/[Rp.]+/g, "")));
-      console.log(kredit);
     });
     const totalDebitAll = debit.reduce((a, b) => a + b, 0);
     const totalKreditAll = kredit.reduce((a, b) => a + b, 0);
@@ -132,21 +136,31 @@ class Perkiraan extends React.Component {
     }
 
     if (data) {
-      const sortedData = this.bubbleSort(data);
+      const dataClone = data.slice();
+      const sortedData = this.bubbleSort(dataClone);
       console.log(sortedData);
-      const indexModal = sortedData.findIndex(
+
+      //THIS DATA FOR LAPORAN
+      const dataSaldoAllSend = this.calculateSaldoAll(dataClone);
+      this.setState({
+        dataPerkiraanSend: sortedData,
+        dataSaldoAllSend: dataSaldoAllSend
+      });
+
+      //FIND AND SPLICE MODAL
+
+      const sortedDataWithoutModal = this.bubbleSort(data);
+      const indexModal = sortedDataWithoutModal.findIndex(
         dataSaldo => dataSaldo[0].nama_akun === "MODAL"
       );
-      sortedData.splice(indexModal, 1);
+      sortedDataWithoutModal.splice(indexModal, 1);
+      console.log(sortedDataWithoutModal);
       const dataSaldoAll = this.calculateSaldoAll(data);
-      console.log(dataSaldoAll);
-
-      console.log(dataSaldoAll);
       const totalDebitKreditModal = this.calculateTotalDebitAndKredit(
         dataSaldoAll
       );
       this.setState({
-        dataPerkiraan: sortedData,
+        dataPerkiraan: sortedDataWithoutModal,
         dataSaldoAll: dataSaldoAll,
         totalDebitKreditModal
       });
@@ -208,32 +222,90 @@ class Perkiraan extends React.Component {
           </Col>
         </Row>
         {this.state.totalDebitKreditModal ? (
-          <Row>
-            <Col>
-              <Card>
-                <CardBody>
-                  <h3>Debit</h3>
-                  <h4>{this.state.totalDebitKreditModal.totalDebitAll}`</h4>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col>
-              <Card>
-                <CardBody>
-                  <h3>Kredit</h3>
-                  <h4>{this.state.totalDebitKreditModal.totalKreditAll}`</h4>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col>
-              <Card>
-                <CardBody>
-                  <h3>Modal</h3>
-                  <h4>{this.state.totalDebitKreditModal.modal}`</h4>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
+          <div>
+            <Row>
+              <Col>
+                <Card>
+                  <CardBody>
+                    <h3>Debit</h3>
+                    <h4>{this.state.totalDebitKreditModal.totalDebitAll}</h4>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col>
+                <Card>
+                  <CardBody>
+                    <h3>Kredit</h3>
+                    <h4>{this.state.totalDebitKreditModal.totalKreditAll}</h4>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col>
+                <Card>
+                  <CardBody>
+                    <h3>Modal</h3>
+                    <h4>{this.state.totalDebitKreditModal.modal}</h4>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={4}>
+                <Card>
+                  <CardHeader>Buat Laporan</CardHeader>
+                  <CardBody>
+                    <Form className="form-horizontal">
+                      <FormGroup row>
+                        <Col md="3">
+                          <Label htmlFor="idLaporan">Id Laporan</Label>
+                        </Col>
+                        <Col xs="12" md="9">
+                          <Input
+                            value={this.state.idLaporan}
+                            id="idLaporan"
+                            name="idLaporan"
+                            onChange={this.handleChange}
+                          />
+                        </Col>
+                      </FormGroup>
+                      <FormGroup row>
+                        <Col md="3">
+                          <Label htmlFor="namaLaporan">Nama Laporan</Label>
+                        </Col>
+                        <Col xs="12" md="9">
+                          <Input
+                            value={this.state.namaLaporan}
+                            id="namaLaporan"
+                            name="namaLaporan"
+                            onChange={this.handleChange}
+                          />
+                        </Col>
+                      </FormGroup>
+                      <FormGroup row>
+                        <Col md="3">
+                          <Label htmlFor="tglLaporan">Tanggal Laporan</Label>
+                        </Col>
+                        <Col xs="12" md="9">
+                          <Input
+                            type="month"
+                            value={this.state.tglLaporan}
+                            id="tglLaporan"
+                            name="tglLaporan"
+                            onChange={this.handleChange}
+                          />
+                        </Col>
+                      </FormGroup>
+                      <FormGroup style={{ float: "right" }}>
+                        <Button color="success" onClick={this.onCreateLaporan}>
+                          Create
+                        </Button>
+                      </FormGroup>
+                    </Form>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+          </div>
         ) : null}
       </div>
     );

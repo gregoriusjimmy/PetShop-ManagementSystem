@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  Badge,
+  // Badge,
   UncontrolledDropdown,
-  DropdownItem,
-  DropdownMenu,
+  // DropdownItem,
+  // DropdownMenu,
   DropdownToggle,
   Nav,
   NavItem
@@ -12,7 +12,7 @@ import {
 import PropTypes from "prop-types";
 
 import {
-  AppAsideToggler,
+  // AppAsideToggler,
   AppNavbarBrand,
   AppSidebarToggler
 } from "@coreui/react";
