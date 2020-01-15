@@ -13,7 +13,7 @@ import {
   FormGroup
 } from "reactstrap";
 import { formatMoney } from "../../utils/utils";
-import { utilsOnRead } from "../../utils/crud.utils";
+import { utilsOnRead, utilsOnAdd } from "../../utils/crud.utils";
 import TabelPerkiraan from "./tabel-perkiraan.component";
 class Perkiraan extends React.Component {
   constructor() {
@@ -92,10 +92,12 @@ class Perkiraan extends React.Component {
       modal: `Rp${formatMoney(modal)}`
     };
   };
+
   handleChange = event => {
     const { value, name } = event.target;
     this.setState({ [name]: value });
   };
+
   bubbleSort = items => {
     const length = items.length;
     //Number of passes
@@ -113,6 +115,7 @@ class Perkiraan extends React.Component {
     }
     return items;
   };
+
   handleSet = async () => {
     const { startDate, endDate } = this.state;
     let convertStartDate = "";
@@ -138,7 +141,6 @@ class Perkiraan extends React.Component {
     if (data) {
       const dataClone = data.slice();
       const sortedData = this.bubbleSort(dataClone);
-      console.log(sortedData);
 
       //THIS DATA FOR LAPORAN
       const dataSaldoAllSend = this.calculateSaldoAll(dataClone);
@@ -166,7 +168,28 @@ class Perkiraan extends React.Component {
       });
     }
   };
+  onCreateLaporan = async () => {
+    const {
+      idLaporan,
+      namaLaporan,
+      tglLaporan,
+      dataPerkiraanSend,
+      dataSaldoAllSend
+    } = this.state;
+    const source = "http://localhost:3001/createlaporan";
+    const datasend = {
+      idLaporan,
+      namaLaporan,
+      tglLaporan,
+      dataPerkiraan: dataPerkiraanSend,
+      dataSaldoAll: dataSaldoAllSend
+    };
+    const status = await utilsOnAdd(source, datasend);
 
+    if (status === 200) {
+      return alert("Laporan berhasil dibuat");
+    }
+  };
   render() {
     const { dataPerkiraan } = this.state;
 
