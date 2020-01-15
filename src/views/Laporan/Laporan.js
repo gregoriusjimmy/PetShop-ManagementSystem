@@ -12,11 +12,12 @@ import {
   Input,
   CardHeader
 } from "reactstrap";
+import LaporanContainer from "./laporan-container.component";
 import { utilsOnRead, utilsOnAdd } from "../../utils/crud.utils";
 
 class Laporan extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       allLaporan: [],
       currentLaporan: null
@@ -24,24 +25,30 @@ class Laporan extends React.Component {
   }
   async componentDidMount() {
     const data = await utilsOnRead("http://localhost:3001/laporan");
-    this.setState({ allLaporan: data });
+    this.setState({ allLaporan: data }, () =>
+      console.log(this.state.allLaporan)
+    );
   }
 
-  handleSelectLaporan(event) {
+  handleSelectLaporan = event => {
+    const { allLaporan } = this.state;
     const dataId = event.target.attributes.data_id.value;
-    const found = this.state.allLaporan.find(laporan => {
-      return laporan.laporanId === dataId;
+    console.log(dataId);
+    const found = allLaporan.find(laporan => {
+      return laporan.idLaporan === dataId;
     });
     console.log(found);
     this.setState({
       currentLaporan: found
     });
-  }
+  };
 
   render() {
     return (
       <div className="animated fadeIn">
-        {this.state.currentLaporan ? null : (
+        {this.state.currentLaporan ? (
+          <LaporanContainer dataLaporan={this.state.currentLaporan} />
+        ) : (
           <Card>
             <CardHeader>
               <h2>Daftar Laporan</h2>

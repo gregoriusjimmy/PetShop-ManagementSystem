@@ -1,4 +1,7 @@
 export const formatMoney = money => {
+  if (money === null) {
+    return "";
+  }
   let number_string = money.toString(),
     sisa = number_string.length % 3,
     rupiah = number_string.substr(0, sisa),
