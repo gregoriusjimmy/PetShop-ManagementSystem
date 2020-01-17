@@ -1,19 +1,7 @@
 import React from "react";
-import {
-  Card,
-  CardBody,
-  Table,
-  Col,
-  Row,
-  Button,
-  // Form,
-  // FormGroup,
-  Label,
-  Input,
-  CardHeader
-} from "reactstrap";
+import { Card, CardBody, Table, Button, CardHeader } from "reactstrap";
 import LaporanContainer from "./laporan-container.component";
-import { utilsOnRead, utilsOnAdd } from "../../utils/crud.utils";
+import { utilsOnRead } from "../../utils/crud.utils";
 
 class Laporan extends React.Component {
   constructor(props) {

@@ -1,6 +1,6 @@
 export const formatMoney = money => {
   if (money === null) {
-    return "";
+    return "0";
   }
   let number_string = money.toString(),
     sisa = number_string.length % 3,
@@ -11,7 +11,9 @@ export const formatMoney = money => {
     const separator = sisa ? "." : "";
     rupiah += separator + ribuan.join(".");
   }
-
+  if (money < 0) {
+    return `-${rupiah}`;
+  }
   return rupiah;
 };
 

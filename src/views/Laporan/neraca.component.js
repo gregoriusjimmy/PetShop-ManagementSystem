@@ -1,19 +1,6 @@
 import React from "react";
 
-import {
-  Card,
-  CardBody,
-  Table,
-  Col,
-  Row,
-  Button,
-  // Form,
-  // FormGroup,
-  Jumbotron,
-  Label,
-  Input,
-  CardHeader
-} from "reactstrap";
+import { Card, CardBody, Table, Col, Row, Jumbotron } from "reactstrap";
 import { formatMoney } from "../../utils/utils";
 const Neraca = ({ data }) => {
   console.log(data);
